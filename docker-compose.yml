@@ -1,0 +1,29 @@
+# Description:
+# ------------
+# tbd
+#
+# lastmod: 2020-01-23T16:17:56+01:00
+# Change History:
+# ---------------
+#   - 2020-01-23: created, initial working version
+
+version: '3'
+services:
+  dns:
+    build:
+      context: ./unbound/
+      args:
+        alpine_version: 3.11.3
+        unbound_version: 1.9.6-r0
+    ports:
+      - "53:53"
+      - "53:53/udp"
+  dhcp:
+    build:
+      context: ./kea/
+      args:
+        alpine_version: 3.11.3
+        kea_version: 1.6.7-r1
+    ports:
+      - "67:67/udp"
+      - "547:547/udp"

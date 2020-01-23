@@ -1,26 +1,35 @@
-FROM debian:buster
+# Description:
+# ------------
+# Creates an image with 'unbound' DNS server based on Alpine Linux base image.
+#
+# lastmod: 2020-01-23T16:18:33+01:00
+# Change History:
+# ---------------
+#   - 2020-01-23: initial working version
 
-MAINTAINER 0x4242
+ARG alpine_version=3.11.3
+FROM alpine:$alpine_version
 
-RUN apt-get update && \
-    apt-get install -y \
-      unbound \
-      wget && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    wget https://www.internic.net/domain/named.root -O /var/lib/unbound/root.hints
+LABEL maintainer="0x4242"
 
-COPY update.sh /var/lib/unbound/
-RUN chmod +x /var/lib/unbound/update.sh && \
-    chown unbound:unbound /var/lib/unbound/update.sh
+ARG unbound_version=1.9.6-r0
+RUN apk add --no-cache unbound="${unbound_version}" && \
+    wget https://www.internic.net/domain/named.root -O /etc/unbound/root.hints
 
+#COPY update.sh /var/lib/unbound/
+#RUN chmod +x /var/lib/unbound/update.sh && \
+#    chown unbound:unbound /var/lib/unbound/update.sh
+
+# copy unbound.conf into container
 COPY unbound.conf /etc/unbound/unbound.conf
 
+# update root trust anchor, and create lo file
 RUN unbound-anchor -v || true && \
-    chown unbound:unbound /var/lib/unbound/root.key && \
-    touch /var/log/unbound.log && \
-    chown unbound:unbound /var/log/unbound.log
+    touch /var/log/unbound.log
 
+# expose DNS port
 EXPOSE 53
+EXPOSE 53/udp
 
-CMD ["unbound", "-d"]
+ENTRYPOINT ["/usr/sbin/unbound"]
+CMD ["-d"]
