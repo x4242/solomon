@@ -1,10 +1,13 @@
-# Description:
-# ------------
+# ----------------------------------------
+# Description
+# ----------------------------------------
 # Creates an image with 'unbound' DNS server based on Alpine Linux base image.
 #
+# ----------------------------------------
+# Change History
+# ----------------------------------------
 # lastmod: 2020-01-23T16:18:33+01:00
-# Change History:
-# ---------------
+# changelog:
 #   - 2020-01-23: initial working version
 
 ARG alpine_version=3.11.3

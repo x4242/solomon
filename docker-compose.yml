@@ -1,11 +1,17 @@
-# Description:
-# ------------
+# ----------------------------------------
+# Description
+# ----------------------------------------
 # tbd
 #
-# lastmod: 2020-01-23T16:17:56+01:00
-# Change History:
-# ---------------
-#   - 2020-01-23: created, initial working version
+# ----------------------------------------
+# Change History
+# ----------------------------------------
+# lastmod: 2020-01-25T18:23:37+01:00
+# changelog:
+#  - 2020-01-25:
+#    - restart policy: always for 'dns' and 'dhcp' services
+#    - deploy mode global
+#  - 2020-01-23: created, initial working version
 
 version: '3'
 services:
@@ -18,12 +24,20 @@ services:
     ports:
       - "53:53"
       - "53:53/udp"
+    deploy:
+      mode: global
+      restart_policy:
+        condision:: always
   dhcp:
     build:
       context: ./kea/
       args:
         alpine_version: 3.11.3
-        kea_version: 1.6.7-r1
+        kea_version: 1.7.3-r1
     ports:
       - "67:67/udp"
       - "547:547/udp"
+    deploy:
+      mode: global
+      restart_policy:
+        condition: always
