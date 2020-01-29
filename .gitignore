@@ -1,3 +1,4 @@
 kea/dhcpv4.conf
 unbound/unbound.conf
+unbound/local-zone.conf
 unbound/blacklist.conf

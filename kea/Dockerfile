@@ -6,8 +6,9 @@
 # ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-01-23T16:16:04+01:00
+# lastmod: 2020-01-29T23:55:20+01:00
 # changelog:
+#   - 2020-01-29: fix kea version
 #   - 2020-01-23: initial working version
 
 ARG alpine_version=3.11.3
@@ -15,7 +16,7 @@ FROM alpine:$alpine_version
 
 LABEL maintainer="0x4242"
 
-ARG kea_version=1.7.3-r1
+ARG kea_version=1.7.3-r3
 RUN apk add --no-cache kea="${kea_version}" && \
     mkdir /run/kea
 

@@ -34,10 +34,18 @@
 # limitations under the License.
 #
 # ----------------------------------------
+# Social
+# ----------------------------------------
+# Web: http://0x4242.net
+# Twitter: @0x4242 (https://twitter.com/0x4242)
+# Github: x4242 (https://github.com/x4242)
+#
+# ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-01-25T10:23:26+01:00
+# lastmod: 2020-01-27T00:02:31+01:00
 # changelog:
+#  - 2020-01-27: change metadata/header comment block
 #  - 2020-01-25:
 #    - fix stray <CR>s in output from inputs with <CR><LF>
 #    - printf output to give user feedback
@@ -45,21 +53,42 @@
 #    - count domains and give info in blacklist file comment
 #  - 2020-01-24: created
 
+##########################################
+# Blocking Lists URL
+# ----------------------------------------
 # see https://firebog.net/ for details of the lists:
 #   - Lists bulleted with a tick are least likely to interfere with browsing
 #   - Lists bulleted with a cross block multiple useful sites
 #     (e.g: Pi-hole updates, Amazon, Netflix)
 # URLs of diffrent lists can be found at https://v.firebog.net/hosts/lists.php
+##########################################
 LISTS_URL="https://v.firebog.net/hosts/lists.php?type=tick"
 
+##########################################
+# Blacklist Output File
+# ----------------------------------------
 # if absolute path is not given current working directory is used
+##########################################
 BLACKLIST_FILE="blacklist.conf"
 
-# own list of blacklist domains
+##########################################
+# Custom Blacklist
+# ----------------------------------------
+# Own list of blacklist domains. Can contain comment lines starting with #. Each
+# line should contain an URL only as the file is parsed line by line with no
+# rule exept lines with leading # are ignored.
+# Example:
+#   # this is my blacklist
+#   google.com
+#   amazon.com
+#   youtube.com
+#
+# I think you get it...
+##########################################
 MANUAL_LIST="my_blacklist.txt"
 
 # Get URL list from LISTS_URL, exit if error.
-# wget: timeout ofert 3s (-T 3) and 3 retries (-t 3)
+# wget: timeout of 3s (-T 3) and 3 retries (-t 3)
 if ! urls_of_lists="$(wget -T 3 -t 3 -qO - "$LISTS_URL")"; then
   printf "Error: Could not get input list from %s -> exiting\n" "$LISTS_URL" >&2
   exit 1

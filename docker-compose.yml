@@ -6,9 +6,11 @@
 # ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-01-26T13:51:56+01:00
+# lastmod: 2020-01-29T23:54:35+01:00
 # changelog:
-#  - 2020-01-26: fix typo
+#  - 2020-01-29:
+#    - fix kea version
+#    - host network for dhcp service
 #  - 2020-01-25:
 #    - restart policy: always for 'dns' and 'dhcp' services
 #    - deploy mode global
@@ -36,7 +38,8 @@ services:
       context: ./kea/
       args:
         alpine_version: 3.11.3
-        kea_version: 1.7.3-r1
+        kea_version: 1.7.3-r3
+    network_mode: host
     ports:
       - "67:67/udp"
       - "547:547/udp"
