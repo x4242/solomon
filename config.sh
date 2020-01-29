@@ -32,3 +32,5 @@ sed -i "s-<IP4_SUBNET>-${IP4_SUBNET}-g" ./kea/dhcpv4.conf
 sed -i "s/<IP4_DHCP_RANGE>/${IP4_DHCP_RANGE}/g" ./kea/dhcpv4.conf
 sed -i "s/<IP4_DHCP_DNS_SERVER>/${IP4_DHCP_DNS_SERVER}/g" ./kea/dhcpv4.conf
 sed -i "s/<IP4_DHCP_DOMAIN_NAME>/${IP4_DHCP_DOMAIN_NAME}/g" ./kea/dhcpv4.conf
+
+sudo docker-compose build

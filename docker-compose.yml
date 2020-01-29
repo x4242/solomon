@@ -6,14 +6,16 @@
 # ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-01-25T18:23:37+01:00
+# lastmod: 2020-01-26T13:51:56+01:00
 # changelog:
+#  - 2020-01-26: fix typo
 #  - 2020-01-25:
 #    - restart policy: always for 'dns' and 'dhcp' services
 #    - deploy mode global
 #  - 2020-01-23: created, initial working version
 
-version: '3'
+version: '3.7'
+
 services:
   dns:
     build:
@@ -27,7 +29,8 @@ services:
     deploy:
       mode: global
       restart_policy:
-        condision:: always
+        condition: always
+
   dhcp:
     build:
       context: ./kea/
