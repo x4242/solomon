@@ -1,15 +1,18 @@
 # ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-01-26T13:27:00+01:00
+# lastmod: 2020-01-29T23:18:24+01:00
 # changelog:
+#   - 2020-01-29:
+#     - changed listening interface to 0.0.0.0
+#     - include local-zone.conf
 #   - 2020-01-25: Changed IPs to placeholder "<...>" to be set by script and
 #       renamed to unbound-default.conf. In order for Docker contaier to build,
 #       config script must now be run first to create unbound.conf.
 
 server:
   verbosity: 1
-  interface: <IP4_ADDR>
+  interface: 0.0.0.0
   port: 53
   do-ip4: yes
   do-ip6: yes
@@ -25,3 +28,5 @@ server:
   logfile: "/var/log/unbound.log"
   log-time-ascii: yes
   use-syslog: no
+  
+include: "/etc/unbound/local-zone.conf"

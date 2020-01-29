@@ -1,8 +1,11 @@
 // ----------------------------------------
 // Change History
 // ----------------------------------------
-// lastmod: 2020-01-26T13:29:46+01:00
+// lastmod: 2020-01-29T23:34:44+01:00
 // changelog:
+//   - 2020-01-29:
+//       - default router placeholder <IP4_ADDR>
+//       - changed placeholder for domain to <DOMAIN_NAME>
 //   - 2020-01-25: Changed domain specific config parameters to placeholders
 //       (<...>)to be set by script and renamed to unbound-default.conf. In order
 //       for Docker contaier to build, config script must now be run first to
@@ -39,10 +42,13 @@
               "data": "<IP4_DHCP_DNS_SERVER>",
               "always-send": true
             },
-
+            {
+              "name": "routers",
+              "data": "<IP4_ADDR>"
+            }
             {
               "name": "domain-name",
-              "data": "<IP4_DHCP_DOMAIN_NAME>"
+              "data": "<DOMAIN_NAME>"
             }
           ]
         }

@@ -6,8 +6,9 @@
 # ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-01-23T16:18:33+01:00
+# lastmod: 2020-01-29T23:38:10+01:00
 # changelog:
+#   - 2020-01-29: COPY local-zone.conf
 #   - 2020-01-23: initial working version
 
 ARG alpine_version=3.11.3
@@ -25,6 +26,7 @@ RUN apk add --no-cache unbound="${unbound_version}" && \
 
 # copy unbound.conf into container
 COPY unbound.conf /etc/unbound/unbound.conf
+COPY local-zone.conf /etc/unbound/local-zone.conf
 
 # update root trust anchor, and create lo file
 RUN unbound-anchor -v || true && \
