@@ -45,7 +45,7 @@
             {
               "name": "routers",
               "data": "<IP4_ADDR>"
-            }
+            },
             {
               "name": "domain-name",
               "data": "<DOMAIN_NAME>"
