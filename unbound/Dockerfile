@@ -4,9 +4,16 @@
 # Creates an image with 'unbound' DNS server based on Alpine Linux base image.
 #
 # ----------------------------------------
+# Social
+# ----------------------------------------
+# Web: http://0x4242.net
+# Twitter: @0x4242 <https://twitter.com/0x4242>
+# GitHub: x4242 <https://github.com/x4242>
+#
+# ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-01-29T23:38:10+01:00
+# lastmod: 2020-02-21T20:03:57+01:00
 # changelog:
 #   - 2020-01-29: COPY local-zone.conf
 #   - 2020-01-23: initial working version

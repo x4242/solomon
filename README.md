@@ -1,3 +1,8 @@
+[![License: GPL v3](https://img.shields.io/badge/License-GLv3-blue?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)
+
+https://img.shields.io/badge/Twitter-@0x4242-blue?style=flat-square&logo=twitter
+![Twitter Follow](https://img.shields.io/twitter/follow/0x4242?color=blue&logo=twitter&style=flat-square)
+
 # Outline
 - Debian as host OS
 - services as Docker containers
@@ -21,3 +26,7 @@ unbound on Alpine Linux
   - cronjobs
 - Update script: see script
 - Blacklist scripts: see script
+
+## Smart Home
+Mosquitto
+Node-RED
