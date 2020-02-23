@@ -1,8 +1,11 @@
 // ----------------------------------------
 // Change History
 // ----------------------------------------
-// lastmod: 2020-01-29T23:34:44+01:00
+// lastmod: 2020-02-23T15:06:55+01:00
 // changelog:
+//   - 2020-02-23:
+//     - placeholder for listening interface to be confiogured by config.sh
+//     - added NTP server option
 //   - 2020-01-29:
 //       - default router placeholder <IP4_ADDR>
 //       - changed placeholder for domain to <DOMAIN_NAME>
@@ -13,9 +16,8 @@
 
 { "Dhcp4":
 {
-  // listen on all available interfaces
   "interfaces-config": {
-    "interfaces": [ "*" ],
+    "interfaces": [ "<DHCP_INTERFACE>" ],
     "dhcp-socket-type": "raw"
   },
 
@@ -43,9 +45,13 @@
               "always-send": true
             },
             {
+              "name": "ntp-servers",
+              "data": "<IP4_NTP_SERVER>"
+            },
+            {
               "name": "routers",
               "data": "<IP4_ADDR>"
-            }
+            },
             {
               "name": "domain-name",
               "data": "<DOMAIN_NAME>"

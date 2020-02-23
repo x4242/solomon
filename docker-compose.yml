@@ -6,10 +6,15 @@
 # ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-01-29T23:54:35+01:00
+# lastmod: 2020-02-23T16:55:47+01:00
 # changelog:
+#  - 2020-02-23:
+#    - configured 'default' network on all services
+#    - added NTP service
+#    - configure timezone for dhcp, dns and mosquitto
 #  - 2020-01-29:
 #    - fix kea version
+#    - fix typo
 #    - host network for dhcp service
 #  - 2020-01-25:
 #    - restart policy: always for 'dns' and 'dhcp' services
@@ -25,25 +30,86 @@ services:
       args:
         alpine_version: 3.11.3
         unbound_version: 1.9.6-r0
+        tzdata_version: 2019c-r0
+    hostname: dns
+    environment:
+      - TZ=Europe/Berlin
     ports:
       - "53:53"
       - "53:53/udp"
-    deploy:
-      mode: global
-      restart_policy:
-        condition: always
+    networks:
+      - default
+    restart: unless-stopped
 
   dhcp:
     build:
       context: ./kea/
       args:
         alpine_version: 3.11.3
-        kea_version: 1.7.3-r3
-    network_mode: host
+        kea_version: 1.7.3-r4
+        tzdata_version: 2019c-r0
+    hostname: dhcp
+    environment:
+      - TZ=Europe/Berlin
     ports:
       - "67:67/udp"
       - "547:547/udp"
-    deploy:
-      mode: global
-      restart_policy:
-        condition: always
+    network_mode: host
+    restart: unless-stopped
+
+  ntp:
+    build:
+      context: ./openntpd/
+      args:
+        alpine_version: 3.11.3
+        openntpd_version: 6.2_p3-r3
+        tzdata_version: 2019c-r0
+    hostname: ntp
+    environment:
+      - TZ=Europe/Berlin
+    ports:
+      - "123:123/udp"
+    networks:
+      - default
+    cap_add:
+      - CAP_SYS_TIME
+      - CAP_SYS_NICE
+    restart: unless-stopped
+
+  mosquitto:
+    build:
+      context: ./mosquitto/
+      args:
+        mosquitto_version: 1.6.8
+        tzdata_version: 2019c-r0
+    hostname: mosquitto
+    environment:
+      - TZ=Europe/Berlin
+    ports:
+      - "1883:1883"
+    networks:
+      - default
+    volumes:
+      - mosquitto-data:/mosquitto
+    restart: unless-stopped
+
+  node-red:
+    build:
+      context: ./node-red/
+    environment:
+      - TZ=Europe/Berlin
+    hostname: nodered
+    ports:
+      - "1880:1880"
+    networks:
+      - default
+    volumes:
+      - node-red-data:/data
+    restart: unless-stopped
+
+volumes:
+  mosquitto-data:
+  node-red-data:
+
+networks:
+  default:
