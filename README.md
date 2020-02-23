@@ -1,7 +1,6 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GLv3-blue?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)
 
-https://img.shields.io/badge/Twitter-@0x4242-blue?style=flat-square&logo=twitter
-![Twitter Follow](https://img.shields.io/twitter/follow/0x4242?color=blue&logo=twitter&style=flat-square)
+[![Twitter Follow](https://img.shields.io/twitter/follow/0x4242?color=blue&logo=twitter&style=flat-square)](https://twitter.com/0x4242)
 
 # Outline
 - Debian as host OS

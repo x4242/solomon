@@ -13,8 +13,9 @@
 # ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-02-21T20:03:21+01:00
+# lastmod: 2020-02-23T11:54:55+01:00
 # changelog:
+#   - 2020-02-23: added tzdata to set timezone
 #   - 2020-01-29: fix kea version
 #   - 2020-01-23: initial working version
 
@@ -23,8 +24,10 @@ FROM alpine:$alpine_version
 
 LABEL maintainer="0x4242"
 
-ARG kea_version=1.7.3-r3
+ARG kea_version=1.7.3-r4
+ARG tzdata_version=2019c-r0
 RUN apk add --no-cache kea="${kea_version}" && \
+    apk add --no-cache tzdata="${tzdata_version}" && \
     mkdir /run/kea
 
 COPY dhcpv4.conf /etc/kea/dhcpv4.conf
