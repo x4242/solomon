@@ -6,24 +6,38 @@
 # ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-02-23T16:55:47+01:00
+# lastmod: 2020-02-25T23:21:11+01:00
 # changelog:
-#  - 2020-02-23:
-#    - configured 'default' network on all services
-#    - added NTP service
-#    - configure timezone for dhcp, dns and mosquitto
-#  - 2020-01-29:
-#    - fix kea version
-#    - fix typo
-#    - host network for dhcp service
-#  - 2020-01-25:
-#    - restart policy: always for 'dns' and 'dhcp' services
-#    - deploy mode global
-#  - 2020-01-23: created, initial working version
+#   - 2020-02-25: added portainer service
+#   - 2020-02-23:
+#     - configured 'default' network on all services
+#     - added NTP service
+#     - configure timezone for dhcp, dns and mosquitto
+#   - 2020-01-29:
+#     - fix kea version
+#     - fix typo
+#     - host network for dhcp service
+#   - 2020-01-25:
+#     - restart policy: always for 'dns' and 'dhcp' services
+#     - deploy mode global
+#   - 2020-01-23: created, initial working version
 
 version: '3.7'
 
 services:
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - 8000:8000
+      - 9000:9000
+    networks:
+      - default
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    restart: always
+
   dns:
     build:
       context: ./unbound/
@@ -110,6 +124,7 @@ services:
 volumes:
   mosquitto-data:
   node-red-data:
+  portainer-data:
 
 networks:
   default:
