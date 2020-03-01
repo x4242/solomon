@@ -6,8 +6,11 @@
 # ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-02-25T23:21:11+01:00
+# lastmod: 2020-03-01T14:35:07+01:00
 # changelog:
+#   - 2020-03-01: downgrade to version 2 for compatibiliy with portainer
+#   - 2020-02-29: removed build parts, images now need the be pre-build using
+#       'docker-build.sh' script
 #   - 2020-02-25: added portainer service
 #   - 2020-02-23:
 #     - configured 'default' network on all services
@@ -22,29 +25,11 @@
 #     - deploy mode global
 #   - 2020-01-23: created, initial working version
 
-version: '3.7'
+version: '2'
 
 services:
-  portainer:
-    image: portainer/portainer
-    command: -H unix:///var/run/docker.sock
-    ports:
-      - 8000:8000
-      - 9000:9000
-    networks:
-      - default
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer-data:/data
-    restart: always
-
   dns:
-    build:
-      context: ./unbound/
-      args:
-        alpine_version: 3.11.3
-        unbound_version: 1.9.6-r0
-        tzdata_version: 2019c-r0
+    image: 0x4242/solomon-dns:latest
     hostname: dns
     environment:
       - TZ=Europe/Berlin
@@ -55,29 +40,19 @@ services:
       - default
     restart: unless-stopped
 
-  dhcp:
-    build:
-      context: ./kea/
-      args:
-        alpine_version: 3.11.3
-        kea_version: 1.7.3-r4
-        tzdata_version: 2019c-r0
-    hostname: dhcp
-    environment:
-      - TZ=Europe/Berlin
-    ports:
-      - "67:67/udp"
-      - "547:547/udp"
-    network_mode: host
-    restart: unless-stopped
+#  dhcp:
+#    image: 0x4242/solomon-dhcp:latest
+#    hostname: dhcp
+#    environment:
+#      - TZ=Europe/Berlin
+#    ports:
+#      - "67:67/udp"
+#      - "547:547/udp"
+#    network_mode: host
+#    restart: unless-stopped
 
   ntp:
-    build:
-      context: ./openntpd/
-      args:
-        alpine_version: 3.11.3
-        openntpd_version: 6.2_p3-r3
-        tzdata_version: 2019c-r0
+    image: 0x4242/solomon-ntp:latest
     hostname: ntp
     environment:
       - TZ=Europe/Berlin
@@ -91,11 +66,7 @@ services:
     restart: unless-stopped
 
   mosquitto:
-    build:
-      context: ./mosquitto/
-      args:
-        mosquitto_version: 1.6.8
-        tzdata_version: 2019c-r0
+    image: 0x4242/solomon-mosquitto:latest
     hostname: mosquitto
     environment:
       - TZ=Europe/Berlin
@@ -108,8 +79,7 @@ services:
     restart: unless-stopped
 
   node-red:
-    build:
-      context: ./node-red/
+    image: 0x4242/solomon-node-red:latest
     environment:
       - TZ=Europe/Berlin
     hostname: nodered
@@ -124,7 +94,6 @@ services:
 volumes:
   mosquitto-data:
   node-red-data:
-  portainer-data:
 
 networks:
   default:

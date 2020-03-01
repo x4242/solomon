@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock --no-analytics
+    ports:
+      - 8000:8000
+      - 9000:9000
+    networks:
+      - default
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    restart: always
+
+volumes:
+  portainer-data:
+
+networks:
+  default:
