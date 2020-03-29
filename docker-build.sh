@@ -32,12 +32,13 @@
 # ----------------------------------------
 # Change History
 # ----------------------------------------
-# lastmod: 2020-02-29T12:57:06+01:00
+# lastmod: 2020-03-27T15:05:26+01:00
 # changelog:
+#   - 2020-03-27: added sudo
 #   - 2020-21-29: created
 
-docker build --tag 0x4242/solomon-dns:latest --file ./unbound/Dockerfile ./unbound/
-docker build --tag 0x4242/solomon-dhcp:latest --file ./kea/Dockerfile ./kea/
-docker build --tag 0x4242/solomon-ntp:latest --file ./openntpd/Dockerfile ./openntpd/
-docker build --tag 0x4242/solomon-mosquitto:latest --file ./mosquitto/Dockerfile ./mosquitto/
-docker build --tag 0x4242/solomon-node-red:latest --file ./node-red/Dockerfile ./node-red
+sudo docker build --tag 0x4242/solomon-dns:latest --file ./unbound/Dockerfile ./unbound/
+sudo docker build --tag 0x4242/solomon-dhcp:latest --file ./kea/Dockerfile ./kea/
+sudo docker build --tag 0x4242/solomon-ntp:latest --file ./openntpd/Dockerfile ./openntpd/
+sudo docker build --tag 0x4242/solomon-mosquitto:latest --file ./mosquitto/Dockerfile ./mosquitto/
+sudo docker build --tag 0x4242/solomon-node-red:latest --file ./node-red/Dockerfile ./node-red

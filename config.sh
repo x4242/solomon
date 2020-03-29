@@ -1,13 +1,13 @@
 #!/bin/sh
 #
-# ----------------------------------------
+# ------------------------------------------------------------------------------
 # Description
-# ----------------------------------------
+# ------------------------------------------------------------------------------
 # Create service config files from templates.
 #
-# ----------------------------------------
+# ------------------------------------------------------------------------------
 # License
-# ----------------------------------------
+# ------------------------------------------------------------------------------
 # Copyright (C) 2020 0x4242
 #
 # This program is free software: you can redistribute it and/or modify it under
@@ -22,18 +22,28 @@
 # You should have received a copy of the GNU General Public License along with
 # this program.  If not, see <https://www.gnu.org/licenses/>.
 #
-# ----------------------------------------
+# ------------------------------------------------------------------------------
 # Social
-# ----------------------------------------
-# Web: http://0x4242.net
-# Twitter: @0x4242 <https://twitter.com/0x4242>
-# GitHub: x4242 <https://github.com/x4242>
+# ------------------------------------------------------------------------------
+#              __           __ __       ___    __ __       ___
+#            /'__`\        /\ \\ \    /'___`\ /\ \\ \    /'___`\
+#           /\ \/\ \  __  _\ \ \\ \  /\_\ /\ \\ \ \\ \  /\_\ /\ \
+#           \ \ \ \ \/\ \/'\\ \ \\ \_\/_/// /__\ \ \\ \_\/_/// /__
+#            \ \ \_\ \/>  </ \ \__ ,__\ // /_\ \\ \__ ,__\ // /_\ \
+#             \ \____//\_/\_\ \/_/\_\_//\______/ \/_/\_\_//\______/
+#              \/___/ \//\/_/    \/_/  \/_____/     \/_/  \/_____/
 #
-# ----------------------------------------
+#     Web: http://0x4242.net | Twitter: @0x4242 <https://twitter.com/0x4242>
+#                 GitHub: x4242 <https://github.com/x4242>
+#
+# ------------------------------------------------------------------------------
 # Change History
-# ----------------------------------------
-# lastmod: 2020-02-23T15:08:43+01:00
+# ------------------------------------------------------------------------------
+# lastmod: 2020-03-27T02:13:03+01:00
 # changelog:
+#   - 2020-03-27:
+#     - made 'sed -i' POSIX-compliant
+#     - changed to new header template
 #   - 2020-02-23:
 #     - configuration of DHCP listeneing interface
 #     - added NTP server config for 'kea'
@@ -43,7 +53,7 @@
 #     - removed deleting of comment line from conf templates
 #   - 2020-01-26: created
 
-DOMAIN_NAME="int.x4242.net"
+DOMAIN_NAME="int.0x4242.net"
 DHCP_INTERFACE="enp5s0"
 
 IP4_ADDR="10.66.66.1"
@@ -63,13 +73,16 @@ IP6_DHCP_DNS_SERVER="tbd"
 # Copy the templates and replace contents with given configuration (see above).
 ##########################################
 cp ./unbound/unbound.conf.template ./unbound/unbound.conf
-sed -i "s/<IP4_ADDR>/${IP4_ADDR}/g" ./unbound/unbound.conf
+sed -i.bak "s/<IP4_ADDR>/${IP4_ADDR}/g" ./unbound/unbound.conf
 # use - as sed delimeter as / in CIDR notation will cause trouble
-sed -i "s-<IP4_SUBNET>-${IP4_SUBNET}-g" ./unbound/unbound.conf
+sed -i.bak "s-<IP4_SUBNET>-${IP4_SUBNET}-g" ./unbound/unbound.conf
+rm ./unbound/unbound.conf.bak
+
 cp ./unbound/local-zone.conf.template ./unbound/local-zone.conf
-sed -i "s/<DOMAIN_NAME>/${DOMAIN_NAME}/g" ./unbound/local-zone.conf
-sed -i "s/<HOSTNAME>/$(hostname)/g" ./unbound/local-zone.conf
-sed -i "s/<IP4_ADDR>/${IP4_ADDR}/g" ./unbound/local-zone.conf
+sed -i.bak "s/<DOMAIN_NAME>/${DOMAIN_NAME}/g" ./unbound/local-zone.conf
+sed -i.bak "s/<HOSTNAME>/$(hostname)/g" ./unbound/local-zone.conf
+sed -i.bak "s/<IP4_ADDR>/${IP4_ADDR}/g" ./unbound/local-zone.conf
+rm ./unbound/local-zone.conf.bak
 
 ##########################################
 # Create 'kea' config file
@@ -77,10 +90,11 @@ sed -i "s/<IP4_ADDR>/${IP4_ADDR}/g" ./unbound/local-zone.conf
 # Copy the templates and replace contents with given configuration (see above).
 ##########################################
 cp ./kea/dhcpv4.conf.template ./kea/dhcpv4.conf
-sed -i "s-<DHCP_INTERFACE>-${DHCP_INTERFACE}-g" ./kea/dhcpv4.conf
-sed -i "s-<IP4_ADDR>-${IP4_ADDR}-g" ./kea/dhcpv4.conf
-sed -i "s-<IP4_SUBNET>-${IP4_SUBNET}-g" ./kea/dhcpv4.conf
-sed -i "s/<IP4_DHCP_RANGE>/${IP4_DHCP_RANGE}/g" ./kea/dhcpv4.conf
-sed -i "s/<IP4_DHCP_DNS_SERVER>/${IP4_DHCP_DNS_SERVER}/g" ./kea/dhcpv4.conf
-sed -i "s/<IP4_NTP_SERVER>/${IP4_NTP_SERVER}/g" ./kea/dhcpv4.conf
-sed -i "s/<DOMAIN_NAME>/${DOMAIN_NAME}/g" ./kea/dhcpv4.conf
+sed -i.bak "s-<DHCP_INTERFACE>-${DHCP_INTERFACE}-g" ./kea/dhcpv4.conf
+sed -i.bak "s-<IP4_ADDR>-${IP4_ADDR}-g" ./kea/dhcpv4.conf
+sed -i.bak "s-<IP4_SUBNET>-${IP4_SUBNET}-g" ./kea/dhcpv4.conf
+sed -i.bak "s/<IP4_DHCP_RANGE>/${IP4_DHCP_RANGE}/g" ./kea/dhcpv4.conf
+sed -i.bak "s/<IP4_DHCP_DNS_SERVER>/${IP4_DHCP_DNS_SERVER}/g" ./kea/dhcpv4.conf
+sed -i.bak "s/<IP4_NTP_SERVER>/${IP4_NTP_SERVER}/g" ./kea/dhcpv4.conf
+sed -i.bak "s/<DOMAIN_NAME>/${DOMAIN_NAME}/g" ./kea/dhcpv4.conf
+rm ./kea/dhcpv4.conf.bak
