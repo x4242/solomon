@@ -20,11 +20,12 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-03-29T14:09:29+02:00
+# lastmod: 2020-03-30T22:27:05+02:00
 # changelog:
 #   - 2020-03-30:
 #       - moved from docker-compse.yml
 #       - added <HOST_FQDN> for config script
+#       - mind-mount supervisord.conf for dhcp service (kea)
 #   - 2020-03-29: reactivated kea and bind mounted kea-ctrl-agent config file
 #   - 2020-03-27:
 #     - added traefik and labels for traefik to services
@@ -77,6 +78,7 @@ services:
     volumes:
       - ./kea/dhcpv4.conf:/etc/kea/dhcpv4.conf
       - ./kea/kea-ctrl-agent.conf:/etc/kea/kea-ctrl-agent.conf
+      - ./supervisord.conf:/etc/supervisord.conf
     restart: unless-stopped
 
   ntp:

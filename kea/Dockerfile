@@ -22,8 +22,10 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-03-30T02:26:31+02:00
+# lastmod: 2020-03-30T22:27:37+02:00
 # changelog:
+#   - 2020-03-30: Switch to supervisord to run kea-dhcp4 and kea-ctr-agent in
+#     parllel. Entrypoint script didn't work.
 #   - 2020-03-29:
 #     - added socat & curl for interacting with kea control socket
 #     - added kea-hook-lease-cmds, kea-ctrl-agent
@@ -49,6 +51,7 @@ RUN apk add --no-cache kea="${kea_version}" && \
     apk add --no-cache tzdata="${tzdata_version}" && \
     apk add --no-cache socat="${socat_version}" && \
     apk add --no-cache curl && \
+    apk add --no-cache supervisor && \
     mkdir /run/kea
 
 # DHCPv4 server port
@@ -57,5 +60,5 @@ EXPOSE 67/udp
 # DHCPv6 server port
 EXPOSE 547/udp
 
-COPY docker-entrypoint.sh /
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/supervisord"]
+CMD ["-c", "/etc/supervisord.conf"]
