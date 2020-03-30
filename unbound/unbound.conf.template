@@ -1,8 +1,9 @@
-# ----------------------------------------
+# ------------------------------------------------------------------------------
 # Change History
-# ----------------------------------------
-# lastmod: 2020-02-23T16:37:00+01:00
+# ------------------------------------------------------------------------------
+# lastmod: 2020-03-29T16:05:21+02:00
 # changelog:
+#   - 2020-03-29: allow 172.16.0.0/12 for docker networks
 #   - 2020-02-23:
 #     - deactivated IPv6
 #     - allow localhost queries
@@ -26,6 +27,7 @@ server:
   username: "root"
   access-control: <IP4_SUBNET> allow
   access-control: 127.0.0.1/32 allow
+  access-control: 172.16.0.0/12 allow
   auto-trust-anchor-file: "/usr/share/dnssec-root/trusted-key.key"
   root-hints: "/etc/unbound/root.hints"
   hide-identity: yes

@@ -22,8 +22,12 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-03-27T15:13:30+01:00
+# lastmod: 2020-03-30T02:26:31+02:00
 # changelog:
+#   - 2020-03-29:
+#     - added socat & curl for interacting with kea control socket
+#     - added kea-hook-lease-cmds, kea-ctrl-agent
+#     - changed docker entrypoint to run script to start kea & kea-ctrl-agent
 #   - 2020-03-27:
 #     - removed copying ot config file, needs to be bind-mounted now
 #     - changed header
@@ -38,8 +42,13 @@ LABEL maintainer="0x4242"
 
 ARG kea_version=1.7.3-r4
 ARG tzdata_version=2019c-r0
+ARG socat_version=1.7.3.3-r1
 RUN apk add --no-cache kea="${kea_version}" && \
+    apk add --no-cache kea-ctrl-agent="${kea_version}" && \
+    apk add --no-cache kea-hook-lease-cmds="${kea_version}" && \
     apk add --no-cache tzdata="${tzdata_version}" && \
+    apk add --no-cache socat="${socat_version}" && \
+    apk add --no-cache curl && \
     mkdir /run/kea
 
 # DHCPv4 server port
@@ -48,5 +57,5 @@ EXPOSE 67/udp
 # DHCPv6 server port
 EXPOSE 547/udp
 
-ENTRYPOINT ["/usr/sbin/kea-dhcp4"]
-CMD ["-c", "/etc/kea/dhcpv4.conf"]
+COPY docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]

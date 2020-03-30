@@ -24,7 +24,7 @@
 # changelog:
 #   - 2020-03-30:
 #       - moved from docker-compse.yml
-#       - added tempest.int.0x4242.net for config script
+#       - added <HOST_FQDN> for config script
 #   - 2020-03-29: reactivated kea and bind mounted kea-ctrl-agent config file
 #   - 2020-03-27:
 #     - added traefik and labels for traefik to services
@@ -122,7 +122,7 @@ services:
       - >-
         traefik.http.routers.node-red.rule=
         Host(`node-red.localhost`) ||
-        (Host(`tempest.int.0x4242.net`) && PathPrefix(`/node-red`))
+        (Host(`<HOST_FQDN>`) && PathPrefix(`/node-red`))
       - traefik.http.services.node-red.loadbalancer.server.port=1880
       - traefik.http.middlewares.node-red.stripprefix.prefixes=/node-red
       - traefik.http.routers.node-red.middlewares=node-red@docker
@@ -145,7 +145,7 @@ services:
       - >-
         traefik.http.routers.portainer.rule=
         Host(`portainer.localhost`) ||
-        (Host(`tempest.int.0x4242.net`) && PathPrefix(`/portainer`))
+        (Host(`<HOST_FQDN>`) && PathPrefix(`/portainer`))
       - traefik.http.services.portainer.loadbalancer.server.port=9000
       - traefik.http.middlewares.portainer.stripprefix.prefixes=/portainer
       - traefik.http.routers.portainer.middlewares=portainer@docker
@@ -173,7 +173,7 @@ services:
       - >-
         traefik.http.routers.traefik.rule=
         Host(`traefik.localhost`) ||
-        (Host(`tempest.int.0x4242.net`) && PathPrefix(`/traefik`))
+        (Host(`<HOST_FQDN>`) && PathPrefix(`/traefik`))
       - traefik.http.services.traefik.loadbalancer.server.port=8080
       - traefik.http.middlewares.traefik.stripprefix.prefixes=/traefik
       - traefik.http.routers.traefik.middlewares=traefik@docker

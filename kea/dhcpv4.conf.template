@@ -1,8 +1,11 @@
-// ----------------------------------------
+// -----------------------------------------------------------------------------
 // Change History
-// ----------------------------------------
-// lastmod: 2020-02-23T15:06:55+01:00
+// -----------------------------------------------------------------------------
+// lastmod: 2020-03-29T20:21:12+02:00
 // changelog:
+//   - 2020-03-29:
+//     - configuration of control socket
+//     - added config for hooks
 //   - 2020-02-23:
 //     - placeholder for listening interface to be confiogured by config.sh
 //     - added NTP server option
@@ -10,15 +13,20 @@
 //       - default router placeholder <IP4_ADDR>
 //       - changed placeholder for domain to <DOMAIN_NAME>
 //   - 2020-01-25: Changed domain specific config parameters to placeholders
-//       (<...>)to be set by script and renamed to unbound-default.conf. In order
-//       for Docker contaier to build, config script must now be run first to
-//       create dhcpv4.conf.
+//       (<...>)to be set by script and renamed to unbound-default.conf. In
+//       order for Docker contaier to build, config script must now be run first
+//       to create dhcpv4.conf.
 
 { "Dhcp4":
 {
   "interfaces-config": {
     "interfaces": [ "<DHCP_INTERFACE>" ],
     "dhcp-socket-type": "raw"
+  },
+
+  "control-socket": {
+    "socket-type": "unix",
+    "socket-name": "/run/kea/kea-dhcp4-ctrl.sock"
   },
 
   "lease-database": {
@@ -69,6 +77,12 @@
         { "output": "/var/log/kea-dhcp4.log" }
       ],
       "severity": "INFO"
+    }
+  ],
+
+  "hooks-libraries": [
+    {
+      "library": "/usr/lib/kea/hooks/libdhcp_lease_cmds.so"
     }
   ]
 }
