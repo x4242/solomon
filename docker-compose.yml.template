@@ -20,8 +20,11 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-03-30T22:27:05+02:00
+# lastmod: 2020-05-31T11:29:26+02:00
 # changelog:
+#   - 2020-05-31: changed image names of dns, dhcp and ntp
+#   - 2020-05-08: changed env timezone to placeholder to be set by config script
+#   - 2020-05-03: added unbound blacklist volume, needs to be generated first
 #   - 2020-03-30:
 #       - moved from docker-compse.yml
 #       - added <HOST_FQDN> for config script
@@ -52,9 +55,9 @@ version: '2'
 
 services:
   dns:
-    image: 0x4242/solomon-dns:latest
+    image: 0x4242/solomon-unbound:latest
     environment:
-      - TZ=Europe/Berlin
+      - TZ=<TIMEZONE>
     hostname: dns
     ports:
       - 53:53/tcp
@@ -64,12 +67,13 @@ services:
     volumes:
       - ./unbound/unbound.conf:/etc/unbound/unbound.conf
       - ./unbound/local-zone.conf:/etc/unbound/local-zone.conf
+      - ./unbound/blacklist.conf:/etc/unbound/blacklist.conf
     restart: unless-stopped
 
   dhcp:
-    image: 0x4242/solomon-dhcp:latest
+    image: 0x4242/solomon-kea:latest
     environment:
-      - TZ=Europe/Berlin
+      - TZ=<TIMEZONE>
     hostname: dhcp
     ports:
       - 67:67/udp
@@ -78,13 +82,13 @@ services:
     volumes:
       - ./kea/dhcpv4.conf:/etc/kea/dhcpv4.conf
       - ./kea/kea-ctrl-agent.conf:/etc/kea/kea-ctrl-agent.conf
-      - ./supervisord.conf:/etc/supervisord.conf
+      - ./kea/supervisord.conf:/etc/supervisord.conf
     restart: unless-stopped
 
   ntp:
-    image: 0x4242/solomon-ntp:latest
+    image: 0x4242/solomon-openntpd:latest
     environment:
-      - TZ=Europe/Berlin
+      - TZ=<TIMEZONE>
     hostname: ntp
     ports:
       - 123:123/udp
@@ -100,7 +104,7 @@ services:
   mosquitto:
     image: 0x4242/solomon-mosquitto:latest
     environment:
-      - TZ=Europe/Berlin
+      - TZ=<TIMEZONE>
     hostname: mosquitto
     ports:
       - 1883:1883
@@ -113,7 +117,7 @@ services:
   node-red:
     image: 0x4242/solomon-node-red:latest
     environment:
-      - TZ=Europe/Berlin
+      - TZ=<TIMEZONE>
     hostname: nodered
     ports:
       - 1880:1880
@@ -136,7 +140,7 @@ services:
     image: portainer/portainer
     command: -H unix:///var/run/docker.sock --no-analytics
     environment:
-      - TZ=Europe/Berlin
+      - TZ=<TIMEZONE>
     ports:
       - 8000:8000
       - 9000:9000
@@ -165,7 +169,7 @@ services:
       - --log.level=INFO
       - --entrypoints.web.address=:80
     environment:
-      - TZ=Europe/Berlin
+      - TZ=<TIMEZONE>
     ports:
       - 80:80
       - 443:443

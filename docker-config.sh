@@ -8,8 +8,10 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-03-27T02:13:03+01:00
+# lastmod: 2020-05-08T01:58:55+02:00
 # changelog:
+#   - 2020-05-08: added timezone configuration
+#   - 2020-05-03: added DNS blacklist generations
 #   - 2020-03-27:
 #     - made 'sed -i' POSIX-compliant
 #     - changed to new header template
@@ -23,8 +25,9 @@
 #   - 2020-01-26: created
 
 # ------------------------------------------------------------------------------
-# Confif Parameters
+# Config Parameters
 # ------------------------------------------------------------------------------
+# TIMEZONE: The timezone.
 # DOMAIN_NAME: The internal domain name which is used for DNS and DHCP servcies.
 # DHCP_INTERFACE: The interface name on which the DHCP server is listening.
 # IP4_ADDR: The IPv4 address of the host on the internal network. This address
@@ -34,6 +37,7 @@
 # IP4_DHCP_DNS_SERVER: The DNS server's IP as advertised by the DHCP service.
 # IP4_NTP_SERVER: The NTP server's IP as advertised by the DHCPP service
 
+TIMEZONE="Europe/Berlin"
 DOMAIN_NAME="int.0x4242.net"
 DHCP_INTERFACE="enp6s0"
 IP4_ADDR="10.66.66.1"
@@ -47,6 +51,7 @@ IP4_NTP_SERVER="10.66.66.1"
 # ------------------------------------------------------------------------------
 cp ./docker-compose.yml.template ./docker-compose.yml
 sed -i.tmp "s/<HOST_FQDN>/$(hostname).${DOMAIN_NAME}/g" ./docker-compose.yml
+sed -i.tmp "s/<TIMEZONE>/${TIMEZONE}/g" ./docker-compose.yml
 rm ./docker-compose.yml.tmp
 
 # ------------------------------------------------------------------------------
@@ -63,6 +68,8 @@ sed -i.tmp "s/<DOMAIN_NAME>/${DOMAIN_NAME}/g" ./unbound/local-zone.conf
 sed -i.tmp "s/<HOSTNAME>/$(hostname)/g" ./unbound/local-zone.conf
 sed -i.tmp "s/<IP4_ADDR>/${IP4_ADDR}/g" ./unbound/local-zone.conf
 rm ./unbound/local-zone.conf.tmp
+
+./unbound/generate_blacklist.sh
 
 # ------------------------------------------------------------------------------
 # Create 'kea' config file from template

@@ -22,9 +22,11 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-03-30T22:27:37+02:00
+# lastmod: 2020-05-31T11:14:55+02:00
 # changelog:
-#   - 2020-03-30: Switch to supervisord to run kea-dhcp4 and kea-ctr-agent in
+#   - 2020-05-21: update to aplpine 3.12
+#   - 2020-05-21: update to alpine 3.11.6
+#   - 2020-03-30: Switch to supervisord to run kea-dhcp4 and kea-ctrl-agent in
 #     parllel. Entrypoint script didn't work.
 #   - 2020-03-29:
 #     - added socat & curl for interacting with kea control socket
@@ -37,21 +39,20 @@
 #   - 2020-01-29: fix kea version
 #   - 2020-01-23: initial working version
 
-ARG alpine_version=3.11.3
+ARG alpine_version=3.12
 FROM alpine:$alpine_version
 
 LABEL maintainer="0x4242"
 
-ARG kea_version=1.7.3-r4
-ARG tzdata_version=2019c-r0
-ARG socat_version=1.7.3.3-r1
+ARG kea_version=1.7.7-r0
+ARG tzdata_version=2020a-r0
+ARG supervisor_version=4.2.0-r0
+
 RUN apk add --no-cache kea="${kea_version}" && \
     apk add --no-cache kea-ctrl-agent="${kea_version}" && \
     apk add --no-cache kea-hook-lease-cmds="${kea_version}" && \
     apk add --no-cache tzdata="${tzdata_version}" && \
-    apk add --no-cache socat="${socat_version}" && \
-    apk add --no-cache curl && \
-    apk add --no-cache supervisor && \
+    apk add --no-cache supervisor="${supervisor_version}" && \
     mkdir /run/kea
 
 # DHCPv4 server port

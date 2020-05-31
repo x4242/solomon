@@ -23,22 +23,30 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-03-27T15:08:04+01:00
+# lastmod: 2020-05-31T11:15:58+02:00
 # changelog:
+#   - 2020-05-31: update to alpine 3.12
+#   - 2020-05-21:
+#     - update to alpine 3.11.6
+#     - workaround for openntpd ssl issue (mkdir -m ...), see
+#       https://tech.goglides.com/2020/03/09/manage-ntp-using-kubernetes/ for
+#       details
 #   - 2020-03-27:
 #     - removed copy of config file, needs be be bind-mounted now
 #     - changed header
 #   - 2020-02-23: created
 
-ARG alpine_version=3.11.3
+ARG alpine_version=3.12
 FROM alpine:$alpine_version
 
 LABEL maintainer="0x4242"
 
 ARG openntpd_version=6.2_p3-r3
-ARG tzdata_version=2019c-r0
+ARG tzdata_version=2020a-r0
 RUN apk add --no-cache openntpd="${openntpd_version}" && \
     apk add --no-cache tzdata="${tzdata_version}"
+
+RUN mkdir -m 1777 /var/empty/tmp
 
 # NTP server port
 EXPOSE 123/udp

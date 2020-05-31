@@ -20,8 +20,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-03-27T15:10:15+01:00
+# lastmod: 2020-05-31T11:22:19+02:00
 # changelog:
+#   - 2020-05-31: update to mosquitto 1.6.9
 #   - 2020-03-27: changed header
 #   - 2020-03-01: use modified version of official image Dockerfile:
 #       - adapted number of volume (just one)
@@ -35,8 +36,8 @@
 ARG alpine_version=3.8
 FROM alpine:$alpine_version
 
-ENV VERSION=1.6.8 \
-    DOWNLOAD_SHA256=7df23c81ca37f0e070574fe74414403cf25183016433d07add6134366fb45df6 \
+ENV VERSION=1.6.9 \
+    DOWNLOAD_SHA256=412979b2db0a0020bd02fa64f0a0de9e7000b84462586e32b67f29bb1f6c1685 \
     GPG_KEYS=A0D6EEA1DCAE49A635A3B2F0779B22DFB3E717B7 \
     LWS_VERSION=2.4.2
 

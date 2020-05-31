@@ -1,8 +1,11 @@
 // -----------------------------------------------------------------------------
 // Change History
 // -----------------------------------------------------------------------------
-// lastmod: 2020-03-29T20:21:12+02:00
+// lastmod: 2020-05-17T19:05:12+02:00
 // changelog:
+//   - 2020-05-17: Moved "option-data" one level higher so that also works for
+//       reserved hosts. Otherwise options will only be sent to address in pool
+//       range.
 //   - 2020-03-29:
 //     - configuration of control socket
 //     - added config for hooks
@@ -46,25 +49,25 @@
       "pools": [
         {
           "pool": "<IP4_DHCP_RANGE>",
-          "option-data": [
-            {
-              "name": "domain-name-servers",
-              "data": "<IP4_DHCP_DNS_SERVER>",
-              "always-send": true
-            },
-            {
-              "name": "ntp-servers",
-              "data": "<IP4_NTP_SERVER>"
-            },
-            {
-              "name": "routers",
-              "data": "<IP4_ADDR>"
-            },
-            {
-              "name": "domain-name",
-              "data": "<DOMAIN_NAME>"
-            }
-          ]
+        }
+      ],
+      "option-data": [
+        {
+          "name": "domain-name-servers",
+          "data": "<IP4_DHCP_DNS_SERVER>",
+          "always-send": true
+        },
+        {
+          "name": "ntp-servers",
+          "data": "<IP4_NTP_SERVER>"
+        },
+        {
+          "name": "routers",
+          "data": "<IP4_ADDR>"
+        },
+        {
+          "name": "domain-name",
+          "data": "<DOMAIN_NAME>"
         }
       ]
     }
