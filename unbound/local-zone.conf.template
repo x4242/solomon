@@ -1,3 +1,5 @@
 server:
+  local-zone: "docker.health.check.unbound." static
+  local-data: "docker.health.check.unbound. IN A 127.0.0.1"
   local-zone: "<DOMAIN_NAME>." static
   local-data: "<HOSTNAME>.<DOMAIN_NAME>. IN A <IP4_ADDR>"

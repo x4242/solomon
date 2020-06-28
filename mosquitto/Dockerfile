@@ -20,8 +20,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-05-31T11:22:19+02:00
+# lastmod: 2020-06-20T15:37:59+02:00
 # changelog:
+#   - 2020-06-20: re-added tzdata
 #   - 2020-05-31: update to mosquitto 1.6.9
 #   - 2020-03-27: changed header
 #   - 2020-03-01: use modified version of official image Dockerfile:
@@ -112,6 +113,7 @@ RUN set -x && \
     install -m644 /build/mosq/mosquitto.conf /mosquitto/config/mosquitto.conf && \
     chown -R mosquitto:mosquitto /mosquitto && \
     apk --no-cache add \
+        tzdata \
         ca-certificates && \
     apk del build-deps && \
     rm -rf /build

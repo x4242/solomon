@@ -22,6 +22,8 @@
 # ------------------------------------------------------------------------------
 # lastmod: 2020-05-31T11:29:26+02:00
 # changelog:
+#   - 2020-06-20: renamed 'mosquitto' service to 'mqtt' to match other service
+#       naminh, changed volume name accordingly
 #   - 2020-05-31: changed image names of dns, dhcp and ntp
 #   - 2020-05-08: changed env timezone to placeholder to be set by config script
 #   - 2020-05-03: added unbound blacklist volume, needs to be generated first
@@ -101,7 +103,7 @@ services:
       - ./openntpd/ntpd.conf:/etc/ntpd.conf
     restart: unless-stopped
 
-  mosquitto:
+  mqtt:
     image: 0x4242/solomon-mosquitto:latest
     environment:
       - TZ=<TIMEZONE>
@@ -111,7 +113,7 @@ services:
     networks:
       - default
     volumes:
-      - mosquitto-data:/mosquitto
+      - mqtt-data:/mosquitto
     restart: unless-stopped
 
   node-red:
@@ -188,7 +190,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  mosquitto-data:
+  mqtt-data:
   node-red-data:
   portainer-data:
 

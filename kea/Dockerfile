@@ -22,8 +22,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-05-31T11:14:55+02:00
+# lastmod: 2020-06-20T15:40:05+02:00
 # changelog:
+#   - 2020-06-20: simplified apk add
 #   - 2020-05-21: update to aplpine 3.12
 #   - 2020-05-21: update to alpine 3.11.6
 #   - 2020-03-30: Switch to supervisord to run kea-dhcp4 and kea-ctrl-agent in
@@ -48,11 +49,12 @@ ARG kea_version=1.7.7-r0
 ARG tzdata_version=2020a-r0
 ARG supervisor_version=4.2.0-r0
 
-RUN apk add --no-cache kea="${kea_version}" && \
-    apk add --no-cache kea-ctrl-agent="${kea_version}" && \
-    apk add --no-cache kea-hook-lease-cmds="${kea_version}" && \
-    apk add --no-cache tzdata="${tzdata_version}" && \
-    apk add --no-cache supervisor="${supervisor_version}" && \
+RUN apk add --no-cache \
+    kea="${kea_version}" \
+    kea-ctrl-agent="${kea_version}" \
+    kea-hook-lease-cmds="${kea_version}" \
+    tzdata="${tzdata_version}" \
+    supervisor="${supervisor_version}" && \
     mkdir /run/kea
 
 # DHCPv4 server port

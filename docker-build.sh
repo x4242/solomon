@@ -8,8 +8,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-05-31T11:23:41+02:00
+# lastmod: 2020-06-28T13:37:18+02:00
 # changelog:
+#   - 2020-06-28: removed openvpn
 #   - 2020-05-31: added openvpn; renamed dns,dhcp,ntp
 #   - 2020-03-29: removed sudo, changed header
 #   - 2020-03-27: added sudo
@@ -29,6 +30,3 @@ docker build --file ./mosquitto/Dockerfile ./mosquitto/ \
 
 docker build --file ./node-red/Dockerfile ./node-red \
              --tag 0x4242/solomon-node-red:latest
-
-docker build --file ./openvpn/Dockerfile ./openvpn \
-             --tag 0x4242/solomon-openvpn:latest

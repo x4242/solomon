@@ -23,8 +23,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-05-31T11:15:58+02:00
+# lastmod: 2020-06-20T15:40:56+02:00
 # changelog:
+#   - 2020-06-20: -s flag for faster clock sync; simplified apk add
 #   - 2020-05-31: update to alpine 3.12
 #   - 2020-05-21:
 #     - update to alpine 3.11.6
@@ -43,13 +44,16 @@ LABEL maintainer="0x4242"
 
 ARG openntpd_version=6.2_p3-r3
 ARG tzdata_version=2020a-r0
-RUN apk add --no-cache openntpd="${openntpd_version}" && \
-    apk add --no-cache tzdata="${tzdata_version}"
+RUN apk add --no-cache \
+    openntpd="${openntpd_version}" \
+    tzdata="${tzdata_version}"
 
 RUN mkdir -m 1777 /var/empty/tmp
+
+# TODO: remove drift file, seems to help with sync issue #1
 
 # NTP server port
 EXPOSE 123/udp
 
 ENTRYPOINT ["/usr/sbin/ntpd"]
-CMD ["-d", "-f", "/etc/ntpd.conf"]
+CMD ["-d", "-s", "-f", "/etc/ntpd.conf"]
