@@ -20,10 +20,14 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-05-31T11:29:26+02:00
+# lastmod: 2020-07-06T01:53:57+02:00
 # changelog:
+#   - 2020-07-06: Added traefik rules so that services can be reached by
+#       'service.<HOST_FQDN>'. This require appropriate DNS server config by
+#       setting local-zone entry for '<HOST_FQDN>` to type 'redirect'. See
+#       unbound/unbound.conf.template for details.
 #   - 2020-06-20: renamed 'mosquitto' service to 'mqtt' to match other service
-#       naminh, changed volume name accordingly
+#       naming, changed volume name accordingly
 #   - 2020-05-31: changed image names of dns, dhcp and ntp
 #   - 2020-05-08: changed env timezone to placeholder to be set by config script
 #   - 2020-05-03: added unbound blacklist volume, needs to be generated first
@@ -130,6 +134,7 @@ services:
       - >-
         traefik.http.routers.node-red.rule=
         Host(`node-red.localhost`) ||
+        Host(`node-red.<HOST_FQDN>`)
         (Host(`<HOST_FQDN>`) && PathPrefix(`/node-red`))
       - traefik.http.services.node-red.loadbalancer.server.port=1880
       - traefik.http.middlewares.node-red.stripprefix.prefixes=/node-red
@@ -153,6 +158,7 @@ services:
       - >-
         traefik.http.routers.portainer.rule=
         Host(`portainer.localhost`) ||
+        Host(`portainer.<HOST_FQDN>`) ||
         (Host(`<HOST_FQDN>`) && PathPrefix(`/portainer`))
       - traefik.http.services.portainer.loadbalancer.server.port=9000
       - traefik.http.middlewares.portainer.stripprefix.prefixes=/portainer
@@ -181,6 +187,7 @@ services:
       - >-
         traefik.http.routers.traefik.rule=
         Host(`traefik.localhost`) ||
+        Host(`traefik.<HOST_FQDN>`) ||
         (Host(`<HOST_FQDN>`) && PathPrefix(`/traefik`))
       - traefik.http.services.traefik.loadbalancer.server.port=8080
       - traefik.http.middlewares.traefik.stripprefix.prefixes=/traefik
