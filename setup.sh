@@ -14,8 +14,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-03-29T17:07:44+02:00
+# lastmod: 2020-07-06T01:59:08+02:00
 # changelog:
+#   - 2020-07-06: deamonize docker-compose up
 #   - 2020-03-29:
 #     - moved from host-setup.sh
 #     - changed header style
@@ -73,4 +74,4 @@ chattr +i /etc/resolv.conf
 # docker services
 ./docker-config.sh
 ./docker-build.sh
-docker-compose up
+docker-compose up -d
