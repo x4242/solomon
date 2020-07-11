@@ -21,6 +21,7 @@
 #     - moved config of /etc/resolv.conf after docker build would
 #       fail if DNS set to localhost as it is not running yet
 #     - deamonized docker-compose up
+#   - 2020-07-06: deamonize docker-compose up
 #   - 2020-03-29:
 #     - moved from host-setup.sh
 #     - changed header style
@@ -80,4 +81,10 @@ rm -r /etc/resolv.conf
 echo "nameserver 127.0.0.1" > /etc/resolv.conf
 chattr +i /etc/resolv.conf
 
+<<<<<<< HEAD
+=======
+# docker services
+./docker-config.sh
+./docker-build.sh
+>>>>>>> b8e54af811c9410be2b4eb455c770a25c8f5a4e4
 docker-compose up -d

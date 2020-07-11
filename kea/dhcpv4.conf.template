@@ -4,6 +4,7 @@
 // lastmod: 2020-06-28T22:04:30+02:00
 // changelog:
 //   - 2020-06-28: logging also to stdout
+//   - 2020-06-07: added option-data codes; logging also to stdout
 //   - 2020-05-17: Moved "option-data" one level higher so that also works for
 //       reserved hosts. Otherwise options will only be sent to address in pool
 //       range.
@@ -55,19 +56,23 @@
       "option-data": [
         {
           "name": "domain-name-servers",
+          "code": 6,
           "data": "<IP4_DHCP_DNS_SERVER>",
           "always-send": true
         },
         {
           "name": "ntp-servers",
+          "code": 42,
           "data": "<IP4_NTP_SERVER>"
         },
         {
           "name": "routers",
+          "code": 3,
           "data": "<IP4_ADDR>"
         },
         {
           "name": "domain-name",
+          "code": 15,
           "data": "<DOMAIN_NAME>"
         }
       ]
@@ -78,7 +83,8 @@
     {
       "name": "kea-dhcp4",
       "output_options": [
-        { "output": "/var/log/kea-dhcp4.log",
+        {
+          "output": "/var/log/kea-dhcp4.log",
           "output": "stdout"
         }
       ],
