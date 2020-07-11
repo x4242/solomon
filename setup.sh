@@ -14,8 +14,13 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-03-29T17:07:44+02:00
+# lastmod: 2020-06-28T14:37:44+02:00
 # changelog:
+#   - 2020-06-28:
+#     - changed delimiter of sed for docker-compose.yml for timezone
+#     - moved config of /etc/resolv.conf after docker build would
+#       fail if DNS set to localhost as it is not running yet
+#     - deamonized docker-compose up
 #   - 2020-03-29:
 #     - moved from host-setup.sh
 #     - changed header style
@@ -65,12 +70,14 @@ rm ./iptables4.rules.bak
 cp ./iptables-restore /etc/network/if-pre-up.d/iptables-restore
 chmod +x /etc/network/if-pre-up.d/iptables-restore
 
-# resolv.conf
+
+# configure and build docker images
+./docker-config.sh
+./docker-build.sh
+
+# configure localhost as DNS resolver and make config file immutable
 rm -r /etc/resolv.conf
 echo "nameserver 127.0.0.1" > /etc/resolv.conf
 chattr +i /etc/resolv.conf
 
-# docker services
-./docker-config.sh
-./docker-build.sh
-docker-compose up
+docker-compose up -d

@@ -23,8 +23,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-06-20T15:40:56+02:00
+# lastmod: 2020-06-28T21:36:57+02:00
 # changelog:
+#   - 2020-06-28: addes health check
 #   - 2020-06-20: -s flag for faster clock sync; simplified apk add
 #   - 2020-05-31: update to alpine 3.12
 #   - 2020-05-21:
@@ -54,6 +55,10 @@ RUN mkdir -m 1777 /var/empty/tmp
 
 # NTP server port
 EXPOSE 123/udp
+
+# health check: ntpctl returns 0 also when clock is unsynced
+HEALTHCHECK --interval=1m --timeout=3s --retries=3 \
+    CMD ntpctl -s status
 
 ENTRYPOINT ["/usr/sbin/ntpd"]
 CMD ["-d", "-s", "-f", "/etc/ntpd.conf"]

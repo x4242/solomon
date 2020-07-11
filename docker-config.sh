@@ -51,7 +51,7 @@ IP4_NTP_SERVER="10.66.66.1"
 # ------------------------------------------------------------------------------
 cp ./docker-compose.yml.template ./docker-compose.yml
 sed -i.tmp "s/<HOST_FQDN>/$(hostname).${DOMAIN_NAME}/g" ./docker-compose.yml
-sed -i.tmp "s/<TIMEZONE>/${TIMEZONE}/g" ./docker-compose.yml
+sed -i.tmp "s-<TIMEZONE>-${TIMEZONE}-g" ./docker-compose.yml
 rm ./docker-compose.yml.tmp
 
 # ------------------------------------------------------------------------------
