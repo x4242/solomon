@@ -1,31 +1,26 @@
-[![License: GPL v3](https://img.shields.io/badge/License-GLv3-blue?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GLv3-blue?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0) [![Twitter Follow](https://img.shields.io/twitter/follow/0x4242?color=blue&logo=twitter&style=flat-square)](https://twitter.com/0x4242)
 
-[![Twitter Follow](https://img.shields.io/twitter/follow/0x4242?color=blue&logo=twitter&style=flat-square)](https://twitter.com/0x4242)
+# solomon - The dockerized Home Router
+---
 
-# Outline
-- Debian as host OS
-- services as Docker containers
-- HW req: 2x ETH, CPU with AES-NI
+The goal of this project is to provide a fully featured hardware agnostic home router aiming to replace traditional ISP or out-of-box solution. Thereby giving back full control over all networking services. Currently 'solomon' is providing the following services:
 
-## DHCP
-Kea on Alpine Linux
+-  DNS server using [Unbound](https://nlnetlabs.nl/projects/unbound/about/)
+-  DHCP server [Kea](https://www.isc.org/kea/)
+-  NTP server using [OpenNTPD](http://www.openntpd.org/)
+-  MQTT broker using [Mosquitto](https://mosquitto.org/)
+-  IoT Automation using [Node-RED](https://nodered.org/)
+-  VPN server using [WireGuard](https://www.wireguard.com/)
+-  Docker host management using [Portainer](https://www.portainer.io/)
 
-**TODO**:
-- add volume to persist lease file
-- finalize config
+## Prerequisites
+---
 
-## DNS
-unbound on Alpine Linux
+-  Debian 10 or later
+-  Two physical network interfaces
 
-**TODO**:
-- Container
-  - finalize config
-  - add volume to container to persists generated config file, maybe cache
-  - find place where to put scripts
-  - cronjobs
-- Update script: see script
-- Blacklist scripts: see script
+## Setup
+---
 
-## Smart Home
-Mosquitto
-Node-RED
+1.  Set the config values in `docker-config.sh` and `setup.sh`
+2.  Run `setup.sh`
