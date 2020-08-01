@@ -8,8 +8,10 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-05-08T01:58:55+02:00
+# lastmod: 2020-08-01T20:40:16+02:00
 # changelog:
+#   - 2020-08-01: renamed config.sh
+#   - 2020-07-11: added TLS certificate path conf for traefik in compose file
 #   - 2020-05-08: added timezone configuration
 #   - 2020-05-03: added DNS blacklist generations
 #   - 2020-03-27:
@@ -45,6 +47,8 @@ IP4_SUBNET="10.66.66.0/24"
 IP4_DHCP_RANGE="10.66.66.100 - 10.66.66.254"
 IP4_DHCP_DNS_SERVER="10.66.66.1"
 IP4_NTP_SERVER="10.66.66.1"
+TRAEFIK_KEY_PATH="domain_cert.key"
+TRAEFIK_CRT_PATH="domain_cert.crt"
 
 # ------------------------------------------------------------------------------
 # Create docker-compose.yml from template
@@ -52,6 +56,8 @@ IP4_NTP_SERVER="10.66.66.1"
 cp ./docker-compose.yml.template ./docker-compose.yml
 sed -i.tmp "s/<HOST_FQDN>/$(hostname).${DOMAIN_NAME}/g" ./docker-compose.yml
 sed -i.tmp "s-<TIMEZONE>-${TIMEZONE}-g" ./docker-compose.yml
+sed -i.tmp "s-<TRAEFIK_KEY_PATH>-${TRAEFIK_KEY_PATH}-g" ./docker-compose.yml
+sed -i.tmp "s-<TRAEFIK_CRT_PATH>-${TRAEFIK_CRT_PATH}-g" ./docker-compose.yml
 rm ./docker-compose.yml.tmp
 
 # ------------------------------------------------------------------------------

@@ -20,8 +20,11 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-07-06T01:53:57+02:00
+# lastmod: 2020-08-01T20:35:37+02:00
 # changelog:
+#   - 2020-08-01: removed exposed HTTP ports from portainer, traefik and
+#       node-red as they are reachable by HTTPS over traefik
+#   - 2020-07-11: TLS configuration for traefik and redirect to HTTPS rules
 #   - 2020-07-06: Added traefik rules so that services can be reached by
 #       'service.<HOST_FQDN>'. This require appropriate DNS server config by
 #       setting local-zone entry for '<HOST_FQDN>` to type 'redirect'. See
@@ -125,20 +128,19 @@ services:
     environment:
       - TZ=<TIMEZONE>
     hostname: nodered
-    ports:
-      - 1880:1880
     networks:
       - default
     labels:
       - traefik.enable=true
-      - >-
-        traefik.http.routers.node-red.rule=
-        Host(`node-red.localhost`) ||
-        Host(`node-red.<HOST_FQDN>`)
-        (Host(`<HOST_FQDN>`) && PathPrefix(`/node-red`))
-      - traefik.http.services.node-red.loadbalancer.server.port=1880
       - traefik.http.middlewares.node-red.stripprefix.prefixes=/node-red
-      - traefik.http.routers.node-red.middlewares=node-red@docker
+      - traefik.http.routers.node-red.entrypoints=web
+      - traefik.http.routers.node-red.rule=Host(`<HOST_FQDN>`) && PathPrefix(`/node-red`)
+      - traefik.http.routers.node-red.middlewares=node-red, redirect-to-https
+      - traefik.http.routers.node-red_https.entrypoints=websecure
+      - traefik.http.routers.node-red_https.rule= Host(`<HOST_FQDN>`) && PathPrefix(`/node-red`)
+      - traefik.http.routers.node-red_https.tls=true
+      - traefik.http.routers.node-red_https.middlewares=node-red
+      - traefik.http.services.node-red.loadbalancer.server.port=1880
     volumes:
       - node-red-data:/data
     restart: unless-stopped
@@ -148,52 +150,58 @@ services:
     command: -H unix:///var/run/docker.sock --no-analytics
     environment:
       - TZ=<TIMEZONE>
-    ports:
-      - 8000:8000
-      - 9000:9000
     networks:
       - default
     labels:
       - traefik.enable=true
-      - >-
-        traefik.http.routers.portainer.rule=
-        Host(`portainer.localhost`) ||
-        Host(`portainer.<HOST_FQDN>`) ||
-        (Host(`<HOST_FQDN>`) && PathPrefix(`/portainer`))
-      - traefik.http.services.portainer.loadbalancer.server.port=9000
       - traefik.http.middlewares.portainer.stripprefix.prefixes=/portainer
-      - traefik.http.routers.portainer.middlewares=portainer@docker
+      - traefik.http.routers.portainer.entrypoints=web
+      - traefik.http.routers.portainer.rule=Host(`<HOST_FQDN>`) && PathPrefix(`/portainer`)
+      - traefik.http.routers.portainer.middlewares=portainer, redirect-to-https
+      - traefik.http.routers.portainer_https.entrypoints=websecure
+      - traefik.http.routers.portainer_https.rule= Host(`<HOST_FQDN>`) && PathPrefix(`/portainer`)
+      - traefik.http.routers.portainer_https.tls=true
+      - traefik.http.routers.portainer_https.middlewares=portainer
+      - traefik.http.services.portainer.loadbalancer.server.port=9000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer-data:/data
-    restart: always
+    restart: unless-stopped
 
   traefik:
     image: traefik:latest
     command:
-      - --api.insecure=true
-      - --providers.docker
+      - --api.insecure=false
+      - --providers.docker=true
       - --providers.docker.exposedbydefault=false
+      - --providers.file.filename=/opt/traefik/certificates.toml
       - --log.level=INFO
       - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
     environment:
       - TZ=<TIMEZONE>
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
     labels:
       - traefik.enable=true
-      - >-
-        traefik.http.routers.traefik.rule=
-        Host(`traefik.localhost`) ||
-        Host(`traefik.<HOST_FQDN>`) ||
-        (Host(`<HOST_FQDN>`) && PathPrefix(`/traefik`))
-      - traefik.http.services.traefik.loadbalancer.server.port=8080
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=false
       - traefik.http.middlewares.traefik.stripprefix.prefixes=/traefik
-      - traefik.http.routers.traefik.middlewares=traefik@docker
+      - traefik.http.routers.traefik.entrypoints=web
+      - traefik.http.routers.traefik.rule=Host(`<HOST_FQDN>`) && PathPrefix(`/traefik`) || PathPrefix(`/api`)
+      - traefik.http.routers.traefik.middlewares=traefik, redirect-to-https
+      - traefik.http.routers.traefik_https.entrypoints=websecure
+      - traefik.http.routers.traefik_https.rule= Host(`<HOST_FQDN>`) && PathPrefix(`/traefik`) || PathPrefix(`/api`)
+      - traefik.http.routers.traefik_https.tls=true
+      - traefik.http.routers.traefik_https.middlewares=traefik
+      - traefik.http.routers.traefik_https.service=api@internal
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/certificates.toml:/opt/traefik/certificates.toml
+      - <TRAEFIK_KEY_PATH>:/opt/traefik/traefik.key
+      - <TRAEFIK_CRT_PATH>:/opt/traefik/traefik.crt
     restart: unless-stopped
 
 volumes:

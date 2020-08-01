@@ -22,5 +22,5 @@ The goal of this project is to provide a fully featured hardware agnostic home r
 ## Setup
 ---
 
-1.  Set the config values in `docker-config.sh` and `setup.sh`
+1.  Set the config values in `config.sh` and `setup.sh`
 2.  Run `setup.sh`
