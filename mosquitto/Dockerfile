@@ -34,11 +34,12 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-08-01T21:13:17+02:00
+# lastmod: 2020-08-01T21:32:30+02:00
 # changelog:
 #   - 2020-08-01:
 #       - removed copying of config file, instead use mound in compose file
-#       - update to mosquitto 1.6.10
+#       - update to mosquitto 1.6.10 but chage to openssl instead of libressl as
+#         it did not work
 #   - 2020-06-20: re-added tzdata
 #   - 2020-05-31: update to mosquitto 1.6.9
 #   - 2020-03-27: changed header
@@ -64,7 +65,7 @@ RUN set -x && \
         build-base \
         cmake \
         gnupg \
-        libressl-dev \
+        openssl-dev \
         util-linux-dev && \
     wget https://github.com/warmcat/libwebsockets/archive/v${LWS_VERSION}.tar.gz -O /tmp/lws.tar.gz && \
     mkdir -p /build/lws && \
