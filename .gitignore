@@ -1,4 +1,6 @@
 docker-compose.yml
+docker-compose.yml.bak
+docker-compose.yml.tmp
 kea/dhcpv4.conf
 unbound/unbound.conf
 unbound/local-zone.conf
