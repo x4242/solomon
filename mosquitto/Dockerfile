@@ -1,7 +1,21 @@
 # ------------------------------------------------------------------------------
 # Description
 # ------------------------------------------------------------------------------
-# Creates an image with 'mosquitto' MQTT broker.
+# Creates an image with Eclipse Mosquitto MQTT broker
+# See https://mosquitto.org/ for details.
+#
+# This is a slightly modifed version of the official Dockerfile from the
+# Eclipse Mosquitto project found under
+# https://github.com/eclipse/mosquitto/tree/master/docker.
+# The modifications are:
+#   - one volume instead of two
+#   - inital password generation script (moqsuitto_initial_passwd.sh)
+#   - wrapper script for mosquitto_passwd (mosquitto_passwd.sh)
+#   - entrypoint script which generates a password if no password file is found
+#   - tzdata package for timezone configuration
+#
+# The images uses the config file found in /mosquitto/config/mosquitto.conf. If
+# a custom configuration is preffered this has to be mounted accordingly.
 #
 # ------------------------------------------------------------------------------
 # Social
@@ -20,8 +34,11 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-06-20T15:37:59+02:00
+# lastmod: 2020-08-01T21:13:17+02:00
 # changelog:
+#   - 2020-08-01:
+#       - removed copying of config file, instead use mound in compose file
+#       - update to mosquitto 1.6.10
 #   - 2020-06-20: re-added tzdata
 #   - 2020-05-31: update to mosquitto 1.6.9
 #   - 2020-03-27: changed header
@@ -34,11 +51,11 @@
 #   - 2020-02-21: add mosquitto_passwd.sh
 #   - 2020-02-09: created
 
-ARG alpine_version=3.8
+ARG alpine_version=3.12
 FROM alpine:$alpine_version
 
-ENV VERSION=1.6.9 \
-    DOWNLOAD_SHA256=412979b2db0a0020bd02fa64f0a0de9e7000b84462586e32b67f29bb1f6c1685 \
+ENV VERSION=1.6.10 \
+    DOWNLOAD_SHA256=92d1807717f0f6d57d1ac1207ffdb952e8377e916c7b0bb4718f745239774232 \
     GPG_KEYS=A0D6EEA1DCAE49A635A3B2F0779B22DFB3E717B7 \
     LWS_VERSION=2.4.2
 
@@ -123,7 +140,6 @@ RUN set -x && \
 COPY docker-entrypoint.sh /
 COPY mosquitto_passwd.sh /usr/local/sbin/
 COPY mosquitto_initial_passwd.sh /usr/local/sbin/
-COPY mosquitto.conf /mosquitto/config/
 VOLUME ["/mosquitto"]
 EXPOSE 1883
 ENTRYPOINT ["/docker-entrypoint.sh"]
