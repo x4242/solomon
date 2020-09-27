@@ -14,8 +14,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-06-28T14:37:44+02:00
+# lastmod: 2020-08-08T12:56:02+02:00
 # changelog:
+#   - 2020-08-01: disable CUPS service running by default; upgrade system
 #   - 2020-06-28:
 #     - changed delimiter of sed for docker-compose.yml for timezone
 #     - moved config of /etc/resolv.conf after docker build would
@@ -36,8 +37,13 @@ EXT_IF="enp6s0"
 EXT_IP4="192.168.0.254/24"
 EXT_IP4_GW="192.168.0.1"
 
-# Update the apt package index:
+# Update the apt package index and upgrade system
 apt-get update
+apt-get upgrade
+
+# debian running cups service by default -> disable
+systemctl stop cups.service
+systemctl disable cups.service
 
 # Install the latest version of Docker Engine Community Edition and containerd
 apt-get install docker-ce docker-ce-cli containerd.io docker-compose
@@ -70,9 +76,8 @@ rm ./iptables4.rules.bak
 cp ./iptables-restore /etc/network/if-pre-up.d/iptables-restore
 chmod +x /etc/network/if-pre-up.d/iptables-restore
 
-
 # configure and build docker images
-./docker-config.sh
+./config.sh
 ./docker-build.sh
 
 # configure localhost as DNS resolver and make config file immutable
@@ -80,7 +85,4 @@ rm -r /etc/resolv.conf
 echo "nameserver 127.0.0.1" > /etc/resolv.conf
 chattr +i /etc/resolv.conf
 
-# docker services
-./config.sh
-./docker-build.sh
 docker-compose up -d

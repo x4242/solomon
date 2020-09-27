@@ -1,8 +1,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-03-29T16:05:21+02:00
+# lastmod: 2020-08-12T21:51:39+02:00
 # changelog:
+#   - 2020-08-12: prefetch: yes and qname-minimisation: yes
 #   - 2020-03-29: allow 172.16.0.0/12 for docker networks
 #   - 2020-02-23:
 #     - deactivated IPv6
@@ -33,6 +34,8 @@ server:
   hide-identity: yes
   hide-version: yes
   harden-glue: yes
+  qname-minimisation: yes
+  prefetch: yes
   logfile: "/var/log/unbound.log"
   log-time-ascii: yes
   use-syslog: no

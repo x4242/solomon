@@ -22,8 +22,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-06-20T15:40:05+02:00
+# lastmod: 2020-09-27T14:34:59+02:00
 # changelog:
+#   - 2020-09-27: changed entrypoint to custom script
 #   - 2020-06-20: simplified apk add
 #   - 2020-05-21: update to aplpine 3.12
 #   - 2020-05-21: update to alpine 3.11.6
@@ -57,11 +58,14 @@ RUN apk add --no-cache \
     supervisor="${supervisor_version}" && \
     mkdir /run/kea
 
+# entrypoint script
+COPY entrypoint.sh /
+
 # DHCPv4 server port
 EXPOSE 67/udp
 
 # DHCPv6 server port
 EXPOSE 547/udp
 
-ENTRYPOINT ["/usr/bin/supervisord"]
-CMD ["-c", "/etc/supervisord.conf"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
