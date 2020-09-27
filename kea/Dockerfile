@@ -60,6 +60,7 @@ RUN apk add --no-cache \
 
 # entrypoint script
 COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 
 # DHCPv4 server port
 EXPOSE 67/udp
