@@ -46,16 +46,12 @@ FROM alpine:$alpine_version
 
 LABEL maintainer="0x4242"
 
-ARG kea_version=1.7.7-r0
-ARG tzdata_version=2020c-r0
-ARG supervisor_version=4.2.0-r0
-
 RUN apk add --no-cache \
-    kea="${kea_version}" \
-    kea-ctrl-agent="${kea_version}" \
-    kea-hook-lease-cmds="${kea_version}" \
-    tzdata="${tzdata_version}" \
-    supervisor="${supervisor_version}" && \
+    kea \
+    kea-ctrl-agent \
+    kea-hook-lease-cmds \
+    tzdata \
+    supervisor && \
     mkdir /run/kea
 
 # entrypoint script

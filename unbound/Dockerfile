@@ -42,12 +42,9 @@ FROM alpine:$alpine_version
 
 LABEL maintainer="0x4242"
 
-ARG unbound_version=1.10.1-r0
-ARG tzdata_version=2020a-r0
-
 RUN apk add --no-cache \
-    unbound="${unbound_version}" \
-    tzdata="${tzdata_version}" \
+    unbound \
+    tzdata \
     python3
 
 # TODO: add initial generation of DNS blacklist; should be stored on volume?
