@@ -20,8 +20,12 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-06-28T13:29:55+02:00
+# lastmod: 2020-11-15T17:53:36+01:00
 # changelog:
+#   - 20202-11-15:
+#       - update.sh
+#       - entrypoint.sh for crond
+#       - python3 for running blacklist script
 #   - 2020-06-28: added healthchek
 #   - 2020-06-20: simplified apk add
 #   - 2020-05-31: update to alpine 3.12
@@ -43,19 +47,16 @@ ARG tzdata_version=2020a-r0
 
 RUN apk add --no-cache \
     unbound="${unbound_version}" \
-    tzdata="${tzdata_version}" && \
-    wget https://www.internic.net/domain/named.root -O /etc/unbound/root.hints
+    tzdata="${tzdata_version}" \
+    python3
 
 # TODO: add initial generation of DNS blacklist; should be stored on volume?
+COPY update.sh /etc/periodic/weekly
+COPY generate_blacklist.py /usr/local/bin
+RUN update.sh
 
-# TODO: add update script + cronjob (root trust anchor + DNS blacklist)
-# COPY update.sh /var/lib/unbound/
-# RUN chmod +x /var/lib/unbound/update.sh && \
-#    chown unbound:unbound /var/lib/unbound/update.sh
-
-# update root trust anchor, and create lo file
-RUN unbound-anchor -v || true && \
-    touch /var/log/unbound.log
+# create log file
+RUN touch /var/log/unbound.log
 
 # expose DNS port
 EXPOSE 53
@@ -65,5 +66,7 @@ EXPOSE 53/udp
 HEALTHCHECK --interval=5m --timeout=5s --retries=3 \
     CMD nslookup docker.health.check.unbound 127.0.0.1
 
-ENTRYPOINT ["/usr/sbin/unbound"]
-CMD ["-d"]
+COPY entrypoint.sh /
+
+ENTRYPOINT ["/entypoint.sh"]
+CMD ["/usr/sbin/unbound", "-d"]

@@ -20,8 +20,10 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-08-01T21:02:50+02:00
+# lastmod: 2020-09-27T17:38:03+02:00
 # changelog:
+#   - 2020-09-27: portainer/portainer image deprecated since v2.0 -> new image
+        is portainer/portainer-ce; --no-analytics flag no longer in use
 #   - 2020-08-01:
 #       - removed exposed HTTP ports from portainer, traefik and node-red as
 #         they are reachable by HTTPS over traefik
@@ -149,8 +151,8 @@ services:
     restart: unless-stopped
 
   portainer:
-    image: portainer/portainer
-    command: -H unix:///var/run/docker.sock --no-analytics
+    image: portainer/portainer-ce
+    command: -H unix:///var/run/docker.sock
     environment:
       - TZ=<TIMEZONE>
     networks:
