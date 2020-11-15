@@ -53,7 +53,6 @@ RUN apk add --no-cache \
 # TODO: add initial generation of DNS blacklist; should be stored on volume?
 COPY update.sh /etc/periodic/weekly
 COPY generate_blacklist.py /usr/local/bin
-RUN update.sh
 
 # create log file
 RUN touch /var/log/unbound.log
@@ -68,5 +67,5 @@ HEALTHCHECK --interval=5m --timeout=5s --retries=3 \
 
 COPY entrypoint.sh /
 
-ENTRYPOINT ["/entypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/sbin/unbound", "-d"]

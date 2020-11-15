@@ -47,7 +47,7 @@ FROM alpine:$alpine_version
 LABEL maintainer="0x4242"
 
 ARG kea_version=1.7.7-r0
-ARG tzdata_version=2020a-r0
+ARG tzdata_version=2020c-r0
 ARG supervisor_version=4.2.0-r0
 
 RUN apk add --no-cache \
