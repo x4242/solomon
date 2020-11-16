@@ -45,7 +45,8 @@ LABEL maintainer="0x4242"
 RUN apk add --no-cache \
     unbound \
     tzdata \
-    python3
+    python3 \
+    supervisor
 
 # TODO: add initial generation of DNS blacklist; should be stored on volume?
 COPY update.sh /etc/periodic/weekly
@@ -65,4 +66,4 @@ HEALTHCHECK --interval=5m --timeout=5s --retries=3 \
 COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/sbin/unbound", "-d"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

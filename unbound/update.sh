@@ -13,7 +13,6 @@
 #   - 2020-01-25: changed to #!/bin/sh for compatibility
 #   - 2020-01-12: created
 
-
 printf "Running Alpine upgrade.\n"
 apk update
 apk upgrade

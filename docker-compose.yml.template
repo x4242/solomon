@@ -20,10 +20,11 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-09-27T17:38:03+02:00
+# lastmod: 2020-11-16T19:23:36+01:00
 # changelog:
+#   - 2020-11-16: supervisord config, black-/whitelist as volume for dns/unbound
 #   - 2020-09-27: portainer/portainer image deprecated since v2.0 -> new image
-        is portainer/portainer-ce; --no-analytics flag no longer in use
+#        is portainer/portainer-ce; --no-analytics flag no longer in use
 #   - 2020-08-01:
 #       - removed exposed HTTP ports from portainer, traefik and node-red as
 #         they are reachable by HTTPS over traefik
@@ -81,6 +82,9 @@ services:
       - ./unbound/unbound.conf:/etc/unbound/unbound.conf
       - ./unbound/local-zone.conf:/etc/unbound/local-zone.conf
       - ./unbound/blacklist.conf:/etc/unbound/blacklist.conf
+      - ./unbound/blacklist.txt:/etc/unbound/blacklist.txt
+      - ./unbound/blacklist.txt:/etc/unbound/whitelist.txt
+      - ./unbound/supervisord.conf:/etc/supervisord.conf
     restart: unless-stopped
 
   dhcp:
