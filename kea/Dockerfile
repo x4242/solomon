@@ -22,8 +22,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-09-27T14:34:59+02:00
+# lastmod: 2020-11-16T19:44:48+01:00
 # changelog:
+#   - 2020-11-16: update script
 #   - 2020-09-27: changed entrypoint to custom script
 #   - 2020-06-20: simplified apk add
 #   - 2020-05-21: update to aplpine 3.12
@@ -54,9 +55,9 @@ RUN apk add --no-cache \
     supervisor && \
     mkdir /run/kea
 
-# entrypoint script
+# entrypoint and update script
 COPY entrypoint.sh /
-RUN chmod +x /entrypoint.sh
+COPY update.sh /etc/periodic/15min
 
 # DHCPv4 server port
 EXPOSE 67/udp
