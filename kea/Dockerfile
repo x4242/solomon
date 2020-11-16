@@ -57,7 +57,7 @@ RUN apk add --no-cache \
 
 # entrypoint and update script
 COPY entrypoint.sh /
-COPY update.sh /etc/periodic/15min
+COPY update.sh /etc/periodic/weekly
 
 # DHCPv4 server port
 EXPOSE 67/udp
