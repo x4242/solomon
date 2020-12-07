@@ -83,7 +83,7 @@ services:
       - ./unbound/local-zone.conf:/etc/unbound/local-zone.conf
       - ./unbound/blacklist.conf:/etc/unbound/blacklist.conf
       - ./unbound/blacklist.txt:/etc/unbound/blacklist.txt
-      - ./unbound/blacklist.txt:/etc/unbound/whitelist.txt
+      - ./unbound/whitelist.txt:/etc/unbound/whitelist.txt
       - ./unbound/supervisord.conf:/etc/supervisord.conf
     restart: unless-stopped
 

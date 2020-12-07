@@ -2,3 +2,8 @@
 -A POSTROUTING -o <INT_IF> -j MASQUERADE
 -A POSTROUTING -o <EXT_IF> -j MASQUERADE
 COMMIT
+*filter
+# block outward DNS coming from internal network
+-A FORWARD -i <INT_IF> -p tcp --dport 53 -j REJECT -m comment --comment "Block external DNS queries coming from internal network"
+-A FORWARD -i <INT_IF> -p udp --dport 53 -j REJECT -m comment --comment "Block external DNS queries coming from internal network"
+COMMIT

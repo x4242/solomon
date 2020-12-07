@@ -69,24 +69,24 @@ for blacklists_entry in blacklists:
 
 
 blacklist.extend(read_file(CUTSOM_BLACKLIST_FILE))
-blacklist.sort()
-blacklist_list = set(blacklist)
+# remove duplicates by converting to set and back to list
+blacklist = list(set(blacklist))
+blacklist.sort(key=str.lower)
 
 for whitelist_domain in read_file(CUTSOM_WHITELIST_FILE):
-    if whitelist_domain in blacklist_list:
+    if whitelist_domain in blacklist:
         print('\'{}\' in blacklist but also in whitelist. Removing from blacklist'.format(whitelist_domain))
-        blacklist_list.remove(whitelist_domain)
+        blacklist.remove(whitelist_domain)
 
-
-print('Found {} URLs to block'.format(len(blacklist_list)))
+print('Found {} URLs to block'.format(len(blacklist)))
 print('Wirting to \'{}\''.format(BLACKLIST_FILE))
 
 blacklist_conf = open(BLACKLIST_FILE, 'w')
 blacklist_conf.write('# generated {}\n'.format(datetime.datetime.now(tz=datetime.timezone.utc)))
-blacklist_conf.write('# domains in list: {}\n'.format(len(blacklist_list)))
+blacklist_conf.write('# domains in list: {}\n'.format(len(blacklist)))
 blacklist_conf.write('server:\n')
 
-for item in blacklist_list:
+for item in blacklist:
     blacklist_conf.write('  local-zone: "{}." redirect\n'.format(item))
     blacklist_conf.write('  local-data: "{}. A 0.0.0.0"\n'.format(item))
     blacklist_conf.write('  local-data: "{}. AAAA ::"\n'.format(item))
