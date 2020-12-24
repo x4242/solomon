@@ -20,8 +20,11 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-11-16T19:23:36+01:00
+# lastmod: 2020-12-24T10:53:46+01:00
 # changelog:
+#   - 2020-12-24: added netdata
+#   - 2020-12-23: added influxdb, telegraf & grafana
+#   - 2020-12-20: added heimdall service
 #   - 2020-11-16: supervisord config, black-/whitelist as volume for dns/unbound
 #   - 2020-09-27: portainer/portainer image deprecated since v2.0 -> new image
 #        is portainer/portainer-ce; --no-analytics flag no longer in use
@@ -84,8 +87,9 @@ services:
       - ./unbound/blacklist.conf:/etc/unbound/blacklist.conf
       - ./unbound/blacklist.txt:/etc/unbound/blacklist.txt
       - ./unbound/whitelist.txt:/etc/unbound/whitelist.txt
-      - ./unbound/supervisord.conf:/etc/supervisord.conf
+      - ./unbound/supervisord.conf:/etc/supervisord.conf:ro
     restart: unless-stopped
+
 
   dhcp:
     image: 0x4242/solomon-kea:latest
@@ -99,8 +103,9 @@ services:
     volumes:
       - ./kea/dhcpv4.conf:/etc/kea/dhcpv4.conf
       - ./kea/kea-ctrl-agent.conf:/etc/kea/kea-ctrl-agent.conf
-      - ./kea/supervisord.conf:/etc/supervisord.conf
+      - ./kea/supervisord.conf:/etc/supervisord.conf:ro
     restart: unless-stopped
+
 
   ntp:
     image: 0x4242/solomon-openntpd:latest
@@ -118,6 +123,7 @@ services:
       - ./openntpd/ntpd.conf:/etc/ntpd.conf
     restart: unless-stopped
 
+
   mqtt:
     image: 0x4242/solomon-mosquitto:latest
     environment:
@@ -131,6 +137,7 @@ services:
       - mqtt-data:/mosquitto
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
     restart: unless-stopped
+
 
   node-red:
     image: 0x4242/solomon-node-red:latest
@@ -154,6 +161,7 @@ services:
       - node-red-data:/data
     restart: unless-stopped
 
+
   portainer:
     image: portainer/portainer-ce
     command: -H unix:///var/run/docker.sock
@@ -176,6 +184,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer-data:/data
     restart: unless-stopped
+
 
   traefik:
     image: traefik:latest
@@ -208,15 +217,120 @@ services:
       - traefik.http.services.traefik.loadbalancer.server.port=8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik/certificates.toml:/opt/traefik/certificates.toml
-      - <TRAEFIK_KEY_PATH>:/opt/traefik/traefik.key
-      - <TRAEFIK_CRT_PATH>:/opt/traefik/traefik.crt
+      - ./traefik/certificates.toml:/opt/traefik/certificates.toml:ro
+      - <TRAEFIK_KEY_PATH>:/opt/traefik/traefik.key:ro
+      - <TRAEFIK_CRT_PATH>:/opt/traefik/traefik.crt:ro
+    restart: unless-stopped
+
+
+  heimdall:
+    image: ghcr.io/linuxserver/heimdall
+    environment:
+      - TZ=<TIMEZONE>
+    networks:
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.heimdall.stripprefix.prefixes=/
+      - traefik.http.routers.heimdall.entrypoints=web
+      - traefik.http.routers.heimdall.rule=Host(`<HOST_FQDN>`)
+      - traefik.http.routers.heimdall.middlewares=heimdall, redirect-to-https
+      - traefik.http.routers.heimdall_https.entrypoints=websecure
+      - traefik.http.routers.heimdall_https.rule= Host(`<HOST_FQDN>`)
+      - traefik.http.routers.heimdall_https.tls=true
+      - traefik.http.routers.heimdall_https.middlewares=heimdall
+      - traefik.http.services.heimdall.loadbalancer.server.port=80
+    volumes:
+      - heimdall-config:/config
+    restart: unless-stopped
+
+
+  netdata:
+    image: netdata/netdata
+    environment:
+      - TZ=<TIMEZONE>
+    networks:
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.netdata.stripprefix.prefixes=/netdata
+      - traefik.http.routers.netdata.entrypoints=web
+      - traefik.http.routers.netdata.rule=Host(`<HOST_FQDN>`) && PathPrefix(`/netdata`)
+      - traefik.http.routers.netdata.middlewares=netdata, redirect-to-https
+      - traefik.http.routers.netdata_https.entrypoints=websecure
+      - traefik.http.routers.netdata_https.rule= Host(`<HOST_FQDN>`) && PathPrefix(`/netdata`)
+      - traefik.http.routers.netdata_https.tls=true
+      - traefik.http.routers.netdata_https.middlewares=netdata
+      - traefik.http.services.netdtata.loadbalancer.server.port=19999
+    cap_add:
+      - SYS_PTRACE
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /etc/os-release:/host/etc/os-release:ro
+    restart: unless-stopped
+
+
+  influxdb:
+    image: influxdb
+    environment:
+      - TZ=<TIMEZONE>
+      - INFLUXDB_REPORTING_DISABLED=true
+      - INFLUXDB_HTTP_AUTH_ENABLED=true
+      - INFLUXDB_DB=mqtt_db
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=<INFLUXDB_ADMIN_PASSWD>
+      - INFLUXDB_USER=user
+      - INFLUXDB_USER_PASSWORD=<INFLUXDB_USER_PASSWD>
+    networks:
+      - default
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    restart: unless-stopped
+
+
+  telegraf:
+    image: telegraf
+    environment:
+      - TZ=<TIMEZONE>
+    networks:
+      - default
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+    restart: unless-stopped
+
+
+  grafana:
+    image: grafana/grafana
+    environment:
+      - TZ=<TIMEZONE>
+      - GF_SERVER_ROOT_URL=https://<HOST_FQDN>/grafana
+    networks:
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.grafana.stripprefix.prefixes=/grafana
+      - traefik.http.routers.grafana.entrypoints=web
+      - traefik.http.routers.grafana.rule=Host(`<HOST_FQDN>`) && PathPrefix(`/grafana`)
+      - traefik.http.routers.grafana.middlewares=grafana, redirect-to-https
+      - traefik.http.routers.grafana_https.entrypoints=websecure
+      - traefik.http.routers.grafana_https.rule= Host(`<HOST_FQDN>`) && PathPrefix(`/grafana`)
+      - traefik.http.routers.grafana_https.tls=true
+      - traefik.http.routers.grafana_https.middlewares=grafana
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+    volumes:
+      - grafana_data:/var/lib/grafana
     restart: unless-stopped
 
 volumes:
   mqtt-data:
   node-red-data:
   portainer-data:
+  heimdall-config:
+  influxdb_data:
 
 networks:
   default:

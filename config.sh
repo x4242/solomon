@@ -39,7 +39,7 @@
 # IP4_DHCP_DNS_SERVER: The DNS server's IP as advertised by the DHCP service.
 # IP4_NTP_SERVER: The NTP server's IP as advertised by the DHCPP service
 
-TIMEZONE="Europe/Berlin"
+TIMEZONE="Europe\Berlin"
 DOMAIN_NAME="int.0x4242.net"
 DHCP_INTERFACE="enp6s0"
 IP4_ADDR="10.66.66.1"
@@ -58,6 +58,17 @@ sed -i.tmp "s/<HOST_FQDN>/$(hostname).${DOMAIN_NAME}/g" ./docker-compose.yml
 sed -i.tmp "s-<TIMEZONE>-${TIMEZONE}-g" ./docker-compose.yml
 sed -i.tmp "s-<TRAEFIK_KEY_PATH>-${TRAEFIK_KEY_PATH}-g" ./docker-compose.yml
 sed -i.tmp "s-<TRAEFIK_CRT_PATH>-${TRAEFIK_CRT_PATH}-g" ./docker-compose.yml
+
+MQTT_PASSWD=$(head -3 /dev/urandom | tr -cd '[:alnum:]' | cut -c -32)
+INFLUXDB_ADMIN_PASSWD=$(head -3 /dev/urandom | tr -cd '[:alnum:]' | cut -c -32)
+sed -i.tmp "s-<INFLUXDB_ADMIN_PASSWD>-${INFLUXDB_ADMIN_PASSWD}-g" ./docker-compose.yml
+INFLUXDB_USER_PASSWD=$(head -3 /dev/urandom | tr -cd '[:alnum:]' | cut -c -32)
+sed -i.tmp "s-<INFLUXDB_USER_PASSWD>-${INFLUXDB_USER_PASSWD}-g" ./docker-compose.yml
+
+printf "InfluxDB admin -> admin:%s\n" "$INFLUXDB_ADMIN_PASSWD"
+printf "InfluxDB user -> user:%s\n" "$INFLUXDB_USER_PASSWD"
+printf "Mosquitto MQTT client -> mqttclient:%s\n" "$MQTT_PASSWD"
+
 rm ./docker-compose.yml.tmp
 
 # ------------------------------------------------------------------------------
@@ -75,7 +86,7 @@ sed -i.tmp "s/<HOSTNAME>/$(hostname)/g" ./unbound/local-zone.conf
 sed -i.tmp "s/<IP4_ADDR>/${IP4_ADDR}/g" ./unbound/local-zone.conf
 rm ./unbound/local-zone.conf.tmp
 
-./unbound/generate_blacklist.sh
+# TODO: replace ./unbound/generate_blacklist.sh with Python script
 
 # ------------------------------------------------------------------------------
 # Create 'kea' config file from template
