@@ -22,7 +22,7 @@
 # ------------------------------------------------------------------------------
 # lastmod: 2020-11-15T17:53:36+01:00
 # changelog:
-#   - 20202-11-15:
+#   - 2020-11-15:
 #       - update.sh
 #       - entrypoint.sh for crond
 #       - python3 for running blacklist script
