@@ -36,6 +36,8 @@
 # ------------------------------------------------------------------------------
 # lastmod: 2020-08-01T21:32:30+02:00
 # changelog:
+#   - 2021-07-11: update to mosquitto 2.0.11 (c&p from offical docker file) and
+#       alpine 3.14
 #   - 2020-08-01:
 #       - removed copying of config file, instead use mound in compose file
 #       - update to mosquitto 1.6.10 but chage to openssl instead of libressl as
@@ -52,22 +54,27 @@
 #   - 2020-02-21: add mosquitto_passwd.sh
 #   - 2020-02-09: created
 
-ARG alpine_version=3.12
+ARG alpine_version=3.14
 FROM alpine:$alpine_version
 
-ENV VERSION=1.6.10 \
-    DOWNLOAD_SHA256=92d1807717f0f6d57d1ac1207ffdb952e8377e916c7b0bb4718f745239774232 \
+ENV VERSION=2.0.11 \
+    DOWNLOAD_SHA256=7b36a7198bce85cf31b132f5c6ee36dcf5dadf86fb768501eb1e11ce95d4f78a \
     GPG_KEYS=A0D6EEA1DCAE49A635A3B2F0779B22DFB3E717B7 \
-    LWS_VERSION=2.4.2
+    LWS_VERSION=4.2.0 \
+    LWS_SHA256=a57e9a4765dbcd4d880feba8089b43ed69995eaf10d5d61a07981d9ddd975f40 \
+    CJSON_VERSION=1.7.14 \
+    CJSON_SHA256=fb50a663eefdc76bafa80c82bc045af13b1363e8f45cec8b442007aef6a41343
 
 RUN set -x && \
     apk --no-cache add --virtual build-deps \
         build-base \
         cmake \
         gnupg \
+        linux-headers \
         openssl-dev \
         util-linux-dev && \
     wget https://github.com/warmcat/libwebsockets/archive/v${LWS_VERSION}.tar.gz -O /tmp/lws.tar.gz && \
+    echo "$LWS_SHA256  /tmp/lws.tar.gz" | sha256sum -c - && \
     mkdir -p /build/lws && \
     tar --strip=1 -xf /tmp/lws.tar.gz -C /build/lws && \
     rm /tmp/lws.tar.gz && \
@@ -75,14 +82,31 @@ RUN set -x && \
     cmake . \
         -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DCMAKE_INSTALL_PREFIX=/usr \
+        -DDISABLE_WERROR=ON \
         -DLWS_IPV6=ON \
         -DLWS_WITHOUT_BUILTIN_GETIFADDRS=ON \
         -DLWS_WITHOUT_CLIENT=ON \
         -DLWS_WITHOUT_EXTENSIONS=ON \
         -DLWS_WITHOUT_TESTAPPS=ON \
+        -DLWS_WITH_EXTERNAL_POLL=ON \
         -DLWS_WITH_SHARED=OFF \
         -DLWS_WITH_ZIP_FOPS=OFF \
         -DLWS_WITH_ZLIB=OFF && \
+    make -j "$(nproc)" && \
+    rm -rf /root/.cmake && \
+    wget https://github.com/DaveGamble/cJSON/archive/v${CJSON_VERSION}.tar.gz -O /tmp/cjson.tar.gz && \
+    echo "$CJSON_SHA256  /tmp/cjson.tar.gz" | sha256sum -c - && \
+    mkdir -p /build/cjson && \
+    tar --strip=1 -xf /tmp/cjson.tar.gz -C /build/cjson && \
+    rm /tmp/cjson.tar.gz && \
+    cd /build/cjson && \
+    cmake . \
+        -DCMAKE_BUILD_TYPE=MinSizeRel \
+        -DBUILD_SHARED_AND_STATIC_LIBS=OFF \
+        -DBUILD_SHARED_LIBS=OFF \
+        -DCJSON_BUILD_SHARED_LIBS=OFF \
+        -DCJSON_OVERRIDE_BUILD_SHARED_LIBS=OFF \
+        -DCMAKE_INSTALL_PREFIX=/usr && \
     make -j "$(nproc)" && \
     rm -rf /root/.cmake && \
     wget https://mosquitto.org/files/source/mosquitto-${VERSION}.tar.gz -O /tmp/mosq.tar.gz && \
@@ -107,14 +131,13 @@ RUN set -x && \
     tar --strip=1 -xf /tmp/mosq.tar.gz -C /build/mosq && \
     rm /tmp/mosq.tar.gz && \
     make -C /build/mosq -j "$(nproc)" \
-        CFLAGS="-Wall -O2 -I/build/lws/include" \
-        LDFLAGS="-L/build/lws/lib" \
+        CFLAGS="-Wall -O2 -I/build/lws/include -I/build" \
+        LDFLAGS="-L/build/lws/lib -L/build/cjson" \
         WITH_ADNS=no \
         WITH_DOCS=no \
         WITH_SHARED_LIBRARIES=yes \
         WITH_SRV=no \
         WITH_STRIP=yes \
-        WITH_TLS_PSK=no \
         WITH_WEBSOCKETS=yes \
         prefix=/usr \
         binary && \
@@ -127,8 +150,14 @@ RUN set -x && \
     install -s -m755 /build/mosq/client/mosquitto_sub /usr/bin/mosquitto_sub && \
     install -s -m644 /build/mosq/lib/libmosquitto.so.1 /usr/lib/libmosquitto.so.1 && \
     install -s -m755 /build/mosq/src/mosquitto /usr/sbin/mosquitto && \
-    install -s -m755 /build/mosq/src/mosquitto_passwd /usr/bin/mosquitto_passwd && \
+    install -s -m755 /build/mosq/apps/mosquitto_ctrl/mosquitto_ctrl /usr/bin/mosquitto_ctrl && \
+    install -s -m755 /build/mosq/apps/mosquitto_passwd/mosquitto_passwd /usr/bin/mosquitto_passwd && \
+    install -s -m755 /build/mosq/plugins/dynamic-security/mosquitto_dynamic_security.so /usr/lib/mosquitto_dynamic_security.so && \
     install -m644 /build/mosq/mosquitto.conf /mosquitto/config/mosquitto.conf && \
+    install -Dm644 /build/cjson/LICENSE /usr/share/licenses/cJSON/LICENSE && \
+    install -Dm644 /build/lws/LICENSE /usr/share/licenses/libwebsockets/LICENSE && \
+    install -Dm644 /build/mosq/epl-v20 /usr/share/licenses/mosquitto/epl-v20 && \
+    install -Dm644 /build/mosq/edl-v10 /usr/share/licenses/mosquitto/edl-v10 && \
     chown -R mosquitto:mosquitto /mosquitto && \
     apk --no-cache add \
         tzdata \
@@ -138,9 +167,7 @@ RUN set -x && \
 
 
 # Set up the entry point script and default command
-COPY docker-entrypoint.sh /
-COPY mosquitto_passwd.sh /usr/local/sbin/
-COPY mosquitto_initial_passwd.sh /usr/local/sbin/
+COPY docker-entrypoint.sh
 VOLUME ["/mosquitto"]
 EXPOSE 1883
 ENTRYPOINT ["/docker-entrypoint.sh"]

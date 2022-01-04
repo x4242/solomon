@@ -26,7 +26,8 @@ docker build --file ./openntpd/Dockerfile ./openntpd/ \
              --tag 0x4242/solomon-openntpd:latest
 
 docker build --file ./mosquitto/Dockerfile ./mosquitto/ \
-             --tag 0x4242/solomon-mosquitto:latest
+             --tag 0x4242/solomon-mosquitto:latest \
+             --tag 0x4242/solomon-mosquitto:2.0.11
 
 docker build --file ./node-red/Dockerfile ./node-red \
              --tag 0x4242/solomon-node-red:latest

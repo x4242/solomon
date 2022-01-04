@@ -20,11 +20,12 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-11-22T18:06:23+01:00
+# lastmod: 2021-07-11T12:24:41+02:00
 # changelog:
+#   - 2021-07-11: update to alpine 3.14
 #   - 2020-11-22: created
 
-ARG alpine_version=3.12
+ARG alpine_version=3.14
 FROM alpine:$alpine_version
 
 LABEL maintainer="0x4242"
@@ -34,8 +35,10 @@ RUN apk add --no-cache \
     supervisor
 
 COPY update.sh /etc/periodic/weekly
+RUN chmod +x /etc/periodic/weekly/update.sh
 
 COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

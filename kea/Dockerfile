@@ -22,8 +22,9 @@
 # ------------------------------------------------------------------------------
 # Change History
 # ------------------------------------------------------------------------------
-# lastmod: 2020-11-16T19:44:48+01:00
+# lastmod: 2021-07-11T11:55:20+02:00
 # changelog:
+#   - 2021-07-11: update to alpine 3.14
 #   - 2020-11-16: update script
 #   - 2020-09-27: changed entrypoint to custom script
 #   - 2020-06-20: simplified apk add
@@ -42,7 +43,7 @@
 #   - 2020-01-29: fix kea version
 #   - 2020-01-23: initial working version
 
-ARG alpine_version=3.12
+ARG alpine_version=3.14
 FROM alpine:$alpine_version
 
 LABEL maintainer="0x4242"

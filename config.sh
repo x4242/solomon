@@ -39,16 +39,17 @@
 # IP4_DHCP_DNS_SERVER: The DNS server's IP as advertised by the DHCP service.
 # IP4_NTP_SERVER: The NTP server's IP as advertised by the DHCPP service
 
-TIMEZONE="Europe\Berlin"
-DOMAIN_NAME="int.0x4242.net"
-DHCP_INTERFACE="enp6s0"
-IP4_ADDR="10.66.66.1"
-IP4_SUBNET="10.66.66.0/24"
-IP4_DHCP_RANGE="10.66.66.100 - 10.66.66.254"
-IP4_DHCP_DNS_SERVER="10.66.66.1"
-IP4_NTP_SERVER="10.66.66.1"
-TRAEFIK_KEY_PATH="domain_cert.key"
-TRAEFIK_CRT_PATH="domain_cert.crt"
+SOLOMON_CONF="solomon.conf"
+
+# ------------------------------------------------------------------------------
+# Check and load config file
+# ------------------------------------------------------------------------------
+if [ ! -f "${SOLOMON_CONF}" ]; then
+  printf "Error: Could not find %b.\n" "${SOLOMON_CONF}" >&2
+  exit 1
+fi
+. $PWD/$SOLOMON_CONF
+
 
 # ------------------------------------------------------------------------------
 # Create docker-compose.yml from template
@@ -58,17 +59,6 @@ sed -i.tmp "s/<HOST_FQDN>/$(hostname).${DOMAIN_NAME}/g" ./docker-compose.yml
 sed -i.tmp "s-<TIMEZONE>-${TIMEZONE}-g" ./docker-compose.yml
 sed -i.tmp "s-<TRAEFIK_KEY_PATH>-${TRAEFIK_KEY_PATH}-g" ./docker-compose.yml
 sed -i.tmp "s-<TRAEFIK_CRT_PATH>-${TRAEFIK_CRT_PATH}-g" ./docker-compose.yml
-
-MQTT_PASSWD=$(head -3 /dev/urandom | tr -cd '[:alnum:]' | cut -c -32)
-INFLUXDB_ADMIN_PASSWD=$(head -3 /dev/urandom | tr -cd '[:alnum:]' | cut -c -32)
-sed -i.tmp "s-<INFLUXDB_ADMIN_PASSWD>-${INFLUXDB_ADMIN_PASSWD}-g" ./docker-compose.yml
-INFLUXDB_USER_PASSWD=$(head -3 /dev/urandom | tr -cd '[:alnum:]' | cut -c -32)
-sed -i.tmp "s-<INFLUXDB_USER_PASSWD>-${INFLUXDB_USER_PASSWD}-g" ./docker-compose.yml
-
-printf "InfluxDB admin -> admin:%s\n" "$INFLUXDB_ADMIN_PASSWD"
-printf "InfluxDB user -> user:%s\n" "$INFLUXDB_USER_PASSWD"
-printf "Mosquitto MQTT client -> mqttclient:%s\n" "$MQTT_PASSWD"
-
 rm ./docker-compose.yml.tmp
 
 # ------------------------------------------------------------------------------
